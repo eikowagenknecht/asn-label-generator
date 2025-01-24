@@ -42,6 +42,12 @@ importers:
       '@types/node':
         specifier: 22.10.10
         version: 22.10.10
+      '@types/pdfkit':
+        specifier: 0.13.8
+        version: 0.13.8
+      '@types/qrcode':
+        specifier: 1.5.5
+        version: 1.5.5
       '@vitejs/plugin-react':
         specifier: 4.3.4
         version: 4.3.4(vite@6.0.11(@types/node@22.10.10)(jiti@2.4.2))
@@ -55,8 +61,8 @@ importers:
         specifier: 15.14.0
         version: 15.14.0
       knip:
-        specifier: 5.43.2
-        version: 5.43.2(@types/node@22.10.10)(typescript@5.7.3)
+        specifier: 5.43.3
+        version: 5.43.3(@types/node@22.10.10)(typescript@5.7.3)
       lefthook:
         specifier: 1.10.10
         version: 1.10.10
@@ -684,6 +690,12 @@ packages:
 
   '@types/node@22.10.10':
     resolution: {integrity: sha512-X47y/mPNzxviAGY5TcYPtYL8JsY3kAq2n8fMmKoRCxq/c4v4pyGNCzM2R6+M5/umG4ZfHuT+sgqDYqWc9rJ6ww==}
+
+  '@types/pdfkit@0.13.8':
+    resolution: {integrity: sha512-lX+wmG9KNisFQXCC/facEw+rljSkMyo6Eh+W4gp/uPZzzmA7TTchKkCp5tMrXDY+lQjqzoxt8rGKRlpxf1c3hw==}
+
+  '@types/qrcode@1.5.5':
+    resolution: {integrity: sha512-CdfBi/e3Qk+3Z/fXYShipBT13OJ2fDO2Q2w5CIP5anLTLIndQG9z6P1cnm+8zCWSpm5dnxMFd/uREtb0EXuQzg==}
 
   '@types/triple-beam@1.3.5':
     resolution: {integrity: sha512-6WaYesThRMCl19iryMYP7/x2OVgCtbIVflDGFpWnb9irXI3UjYE4AzmYuiUKY1AJstGijoY+MgUszMgRxIYTYw==}
@@ -1372,8 +1384,8 @@ packages:
   keyv@4.5.4:
     resolution: {integrity: sha512-oxVHkHR/EJf2CNXnWxRLW6mg7JyCCUcG0DtEGmL2ctUo1PNTin1PUil+r/+4r5MpVgC/fn1kjsx7mjSujKqIpw==}
 
-  knip@5.43.2:
-    resolution: {integrity: sha512-e5l88Kx2QTJ2spRrqnE1V2J6AapwNgHs9lwJuaYr3n5ajeDXf8Wi3C+y3BBFhP6gAUW8J6yvrIxx+tjElhWLyg==}
+  knip@5.43.3:
+    resolution: {integrity: sha512-rCSc7X1jQs+ZIc08lQF3c3nS/nKzsg9UPIbY+qQUMh+FVF5ojdiT3bJNypRlSm2pMLQVeE7XWxXrtT4sdg6nfA==}
     engines: {node: '>=18.18.0'}
     hasBin: true
     peerDependencies:
@@ -2640,6 +2652,14 @@ snapshots:
     dependencies:
       undici-types: 6.20.0
 
+  '@types/pdfkit@0.13.8':
+    dependencies:
+      '@types/node': 22.10.10
+
+  '@types/qrcode@1.5.5':
+    dependencies:
+      '@types/node': 22.10.10
+
   '@types/triple-beam@1.3.5': {}
 
   '@typescript-eslint/eslint-plugin@8.21.0(@typescript-eslint/parser@8.21.0(eslint@9.18.0(jiti@2.4.2))(typescript@5.7.3))(eslint@9.18.0(jiti@2.4.2))(typescript@5.7.3)':
@@ -3380,7 +3400,7 @@ snapshots:
     dependencies:
       json-buffer: 3.0.1
 
-  knip@5.43.2(@types/node@22.10.10)(typescript@5.7.3):
+  knip@5.43.3(@types/node@22.10.10)(typescript@5.7.3):
     dependencies:
       '@nodelib/fs.walk': 3.0.1
       '@snyk/github-codeowners': 1.1.0

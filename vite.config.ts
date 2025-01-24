@@ -16,13 +16,13 @@ export default defineConfig({
     sourcemap: true,
     lib: {
       // Set the entry point
-      entry: path.resolve(__dirname, "src/index.ts"),
+      entry: "src/main.ts",
       // The name of your CLI tool
       name: "template-project",
       // The formats to build
       formats: ["es"],
       // The name of the output file
-      fileName: "index",
+      fileName: "main",
     },
     // Rollup specific options
     rollupOptions: {

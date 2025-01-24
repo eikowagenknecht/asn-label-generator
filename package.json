@@ -1,8 +1,16 @@
 {
-  "name": "template-project",
+  "name": "asn-label-generator",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "CLI Tool for generating ASN labels with QR codes",
   "type": "module",
+  "main": "dist/main.js",
+  "bin": {
+    "asn-label-generator": "./dist/main.js"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "scripts": {
     "dev": "vite-node src/main.ts",
     "build": "vite build",
@@ -32,11 +40,13 @@
     "@commitlint/types": "19.5.0",
     "@eslint/js": "9.18.0",
     "@types/node": "22.10.10",
+    "@types/pdfkit": "0.13.8",
+    "@types/qrcode": "1.5.5",
     "@vitejs/plugin-react": "4.3.4",
     "@vitest/coverage-v8": "3.0.4",
     "eslint": "9.18.0",
     "globals": "15.14.0",
-    "knip": "5.43.2",
+    "knip": "5.43.3",
     "lefthook": "1.10.10",
     "prettier": "3.4.2",
     "rimraf": "6.0.1",
