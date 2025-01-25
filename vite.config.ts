@@ -40,6 +40,5 @@ export default defineConfig({
       provider: "v8",
       include: ["src/**"],
     },
-    setupFiles: "./vitest-setup.ts",
   },
 });
