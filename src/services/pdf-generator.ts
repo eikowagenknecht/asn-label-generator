@@ -163,43 +163,34 @@ export class PDFGenerator {
 
   public async renderLabels(count: number): Promise<void> {
     const labelsPerPage = this.labelInfo.labelsX * this.labelInfo.labelsY;
-    const totalCount = count;
-    const fullPages = Math.floor(totalCount / labelsPerPage);
-    const remainingLabels = totalCount % labelsPerPage;
+    const totalPages = Math.ceil(count / labelsPerPage);
 
-    if (this.skip >= labelsPerPage) {
-      throw new Error("Skip value is larger than labels per page.");
+    // Add empty pages upfront based on skip count
+    const startingPage = Math.floor(this.skip / labelsPerPage);
+    for (let i = 0; i < startingPage; i++) {
+      this.doc.addPage();
     }
 
-    // Render full pages
-    for (let page = 0; page < fullPages; page++) {
-      if (page > 0) {
+    // We'll render labels from index 'skip' up to 'totalLabels'
+    for (let labelIndex = this.skip; labelIndex < count; labelIndex++) {
+      // First, determine which page this label belongs on
+      const pageNumber = Math.floor(labelIndex / labelsPerPage);
+
+      // Add a new page when needed
+      if (pageNumber > 0 && labelIndex % labelsPerPage === 0) {
         this.doc.addPage();
       }
 
-      // Skip labels if needed on the first page
-      const startIdx = page === 0 ? this.skip : 0;
-      for (let i = startIdx; i < labelsPerPage; i++) {
-        const pos = this.calculatePosition(i);
-        await this.renderLabel(pos);
-      }
+      // Calculate the position within the current page
+      // By using modulo here, we ensure the position wraps within each page's grid
+      const positionOnPage = labelIndex % labelsPerPage;
+      const position = this.calculatePosition(positionOnPage);
+      await this.renderLabel(position);
     }
 
-    // Render remaining labels on the last page if any
-    if (remainingLabels > 0) {
-      if (fullPages > 0) {
-        this.doc.addPage();
-      }
-      for (let i = 0; i < remainingLabels; i++) {
-        const pos = this.calculatePosition(i);
-        await this.renderLabel(pos);
-      }
-    }
-
-    const actualCount = totalCount - this.skip;
-    const totalPages = fullPages + (remainingLabels > 0 ? 1 : 0);
+    const renderedLabels = count - this.skip;
     console.log(
-      `Rendered ${actualCount.toFixed()} labels on ${totalPages.toFixed()} pages.`,
+      `Rendered ${renderedLabels.toFixed()} labels on ${totalPages.toFixed()} pages.`,
     );
   }
 }
