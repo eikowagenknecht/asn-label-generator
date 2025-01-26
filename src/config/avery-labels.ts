@@ -1,8 +1,5 @@
+import { MM_TO_POINTS, INCH_TO_POINTS } from "@/util/const";
 import type { LabelInfo } from "../types/label-info";
-
-// Conversion factors
-const MM_TO_POINTS = 2.83465;
-const INCH_TO_POINTS = 72;
 
 // Standard page sizes defined in their natural units (mm for A4, inches for LETTER)
 // and then converted to points
@@ -18,8 +15,8 @@ const LETTER: [number, number] = [
 
 export const labelInfo: Record<string, LabelInfo> = {
   averyL4731: {
-    labelsHorizontal: 7,
-    labelsVertical: 27,
+    labelsX: 7,
+    labelsY: 27,
     labelSize: {
       width: 25.4 * MM_TO_POINTS,
       height: 10 * MM_TO_POINTS,
@@ -35,8 +32,8 @@ export const labelInfo: Record<string, LabelInfo> = {
     pageSize: A4,
   },
   avery5160: {
-    labelsHorizontal: 3,
-    labelsVertical: 10,
+    labelsX: 3,
+    labelsY: 10,
     labelSize: {
       width: 2.6 * INCH_TO_POINTS,
       height: 1 * INCH_TO_POINTS,
@@ -53,8 +50,8 @@ export const labelInfo: Record<string, LabelInfo> = {
   },
   // Adding avery5167 to make use of INCH_TO_POINTS
   avery5167: {
-    labelsHorizontal: 4,
-    labelsVertical: 20,
+    labelsX: 4,
+    labelsY: 20,
     labelSize: {
       width: 1.75 * INCH_TO_POINTS,
       height: 0.5 * INCH_TO_POINTS,

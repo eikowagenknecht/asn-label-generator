@@ -12,8 +12,7 @@ import type {
   Spacing,
 } from "../types/label-info";
 import { generateQRCodeBuffer } from "./qr-renderer";
-
-const POINTS_PER_MM = 2.83465;
+import { MM_TO_POINTS } from "@/util/const";
 
 export class PDFGenerator {
   private readonly doc: PDFKit.PDFDocument;
@@ -45,12 +44,12 @@ export class PDFGenerator {
 
     // Convert mm to points for offsets and margins
     this.offset = {
-      x: options.offset.x * POINTS_PER_MM,
-      y: options.offset.y * POINTS_PER_MM,
+      x: options.offset.x * MM_TO_POINTS,
+      y: options.offset.y * MM_TO_POINTS,
     };
     this.margin = {
-      x: options.margin.x * POINTS_PER_MM,
-      y: options.margin.y * POINTS_PER_MM,
+      x: options.margin.x * MM_TO_POINTS,
+      y: options.margin.y * MM_TO_POINTS,
     };
 
     this.doc = new PDFDocument({
@@ -65,13 +64,13 @@ export class PDFGenerator {
     let y: number;
 
     if (this.topDown) {
-      const col = Math.floor(index / this.labelInfo.labelsVertical);
-      const row = index % this.labelInfo.labelsVertical;
+      const col = Math.floor(index / this.labelInfo.labelsY);
+      const row = index % this.labelInfo.labelsY;
       x = col;
       y = row;
     } else {
-      const row = Math.floor(index / this.labelInfo.labelsHorizontal);
-      const col = index % this.labelInfo.labelsHorizontal;
+      const row = Math.floor(index / this.labelInfo.labelsX);
+      const col = index % this.labelInfo.labelsX;
       x = col;
       y = row;
     }
@@ -103,7 +102,7 @@ export class PDFGenerator {
     const text = `${this.prefix}${this.currentAsn
       .toString()
       .padStart(this.digits, "0")}`;
-    const fontSize = 2 * POINTS_PER_MM; // 2mm font size
+    const fontSize = 2 * MM_TO_POINTS; // 2mm font size
 
     const scaledWidth = this.labelInfo.labelSize.width * this.scale.x;
     const scaledHeight = this.labelInfo.labelSize.height * this.scale.y;
@@ -120,7 +119,7 @@ export class PDFGenerator {
     // Draw QR code aligned to the left
     this.doc.image(
       qrBuffer,
-      labelX + 1 * POINTS_PER_MM,
+      labelX + 1 * MM_TO_POINTS,
       labelY + (scaledHeight - qrScaledSize) / 2,
       {
         width: qrScaledSize,
@@ -134,11 +133,11 @@ export class PDFGenerator {
       .fontSize(fontSize)
       .text(
         text,
-        labelX + qrScaledSize + 2 * POINTS_PER_MM,
+        labelX + qrScaledSize + 2 * MM_TO_POINTS,
         labelY + (scaledHeight - fontSize) / 2,
         {
           width:
-            scaledWidth - qrScaledSize - 3 * POINTS_PER_MM - this.margin.x * 2,
+            scaledWidth - qrScaledSize - 3 * MM_TO_POINTS - this.margin.x * 2,
           align: "left",
           baseline: "top",
         },
@@ -163,8 +162,7 @@ export class PDFGenerator {
   }
 
   public async renderLabels(count: number): Promise<void> {
-    const labelsPerPage =
-      this.labelInfo.labelsHorizontal * this.labelInfo.labelsVertical;
+    const labelsPerPage = this.labelInfo.labelsX * this.labelInfo.labelsY;
     const totalCount = count;
     const fullPages = Math.floor(totalCount / labelsPerPage);
     const remainingLabels = totalCount % labelsPerPage;

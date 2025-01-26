@@ -31,7 +31,12 @@ const program = new Command()
     1,
   )
   .option("-n, --num-labels <number>", "Number of labels", parsePositiveIntArg)
-  .option("-p, --pages <number>", "Number of pages", parsePositiveIntArg, 1)
+  .option(
+    "-p, --pages <number>",
+    "Number of pages. Ignored if number of labels is set.",
+    parsePositiveIntArg,
+    1,
+  )
   .option("--skip <number>", "Skip first N labels", parsePositiveIntArg, 0)
   .option("-f, --format <format>", "Label format to use", "averyL4731")
   .option("-o, --output-file <file>", "Output file path", "labels.pdf")
@@ -74,7 +79,7 @@ async function main(): Promise<void> {
     }
 
     const labelsPerPage =
-      labelFormat.labelsHorizontal * labelFormat.labelsVertical;
+      labelFormat.labelsX * labelFormat.labelsY;
     const count =
       validatedOptions.numLabels ?? validatedOptions.pages * labelsPerPage;
 

@@ -30,8 +30,8 @@ export interface LabelAdjustments {
 }
 
 export interface LabelInfo {
-  labelsHorizontal: number;
-  labelsVertical: number;
+  labelsX: number;
+  labelsY: number;
   labelSize: Dimensions;
   gutterSize: Spacing;
   margin: PageMargins;
