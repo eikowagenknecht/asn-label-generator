@@ -1,6 +1,7 @@
 import { createWriteStream } from "node:fs";
 import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
+import { MM_TO_POINTS } from "@/util/const";
 import PDFDocument from "pdfkit";
 import { labelInfo } from "../config/avery-labels";
 import type {
@@ -12,7 +13,6 @@ import type {
   Spacing,
 } from "../types/label-info";
 import { generateQRCodeBuffer } from "./qr-renderer";
-import { MM_TO_POINTS } from "@/util/const";
 
 export class PDFGenerator {
   private readonly doc: PDFKit.PDFDocument;
@@ -64,84 +64,95 @@ export class PDFGenerator {
     let y: number;
 
     if (this.topDown) {
-      const col = Math.floor(index / this.labelInfo.labelsY);
-      const row = index % this.labelInfo.labelsY;
-      x = col;
-      y = row;
+      x = Math.floor(index / this.labelInfo.labelsY);
+      y = index % this.labelInfo.labelsY;
     } else {
-      const row = Math.floor(index / this.labelInfo.labelsX);
-      const col = index % this.labelInfo.labelsX;
-      x = col;
-      y = row;
+      x = index % this.labelInfo.labelsX;
+      y = Math.floor(index / this.labelInfo.labelsX);
     }
 
-    const baseX =
-      this.labelInfo.margin.left +
-      x * (this.labelInfo.labelSize.width + this.labelInfo.gutterSize.x);
-    const baseY =
-      this.labelInfo.margin.top +
-      y * (this.labelInfo.labelSize.height + this.labelInfo.gutterSize.y);
-
     return {
-      x: baseX * this.scale.x + this.offset.x,
-      y: baseY * this.scale.y + this.offset.y,
+      x:
+        this.labelInfo.margin.left +
+        x * (this.labelInfo.labelSize.width + this.labelInfo.gutterSize.x),
+      y:
+        this.labelInfo.margin.top +
+        y * (this.labelInfo.labelSize.height + this.labelInfo.gutterSize.y),
     };
   }
 
   private drawDebugBorder(pos: LabelPosition): void {
     if (this.border) {
+      // Scale the dimensions independently
       const width = this.labelInfo.labelSize.width * this.scale.x;
       const height = this.labelInfo.labelSize.height * this.scale.y;
-      this.doc.rect(pos.x, pos.y, width, height).stroke();
+      const x = pos.x * this.scale.x + this.offset.x;
+      const y = pos.y * this.scale.y + this.offset.y;
+
+      this.doc.rect(x, y, width, height).stroke();
     }
   }
 
   private async renderLabel(pos: LabelPosition): Promise<void> {
     this.drawDebugBorder(pos);
 
+    // Text to QR encode and render
     const text = `${this.prefix}${this.currentAsn
       .toString()
       .padStart(this.digits, "0")}`;
-    const fontSize = 2 * MM_TO_POINTS; // 2mm font size
 
-    const scaledWidth = this.labelInfo.labelSize.width * this.scale.x;
-    const scaledHeight = this.labelInfo.labelSize.height * this.scale.y;
-    const qrSize = Math.min(scaledWidth, scaledHeight);
-    const qrScaledSize = qrSize * 0.9;
+    // Calculate scaled label basic positions
+    const outerX = pos.x * this.scale.x + this.offset.x;
+    const outerY = pos.y * this.scale.y + this.offset.y;
+    const innerX = outerX + this.margin.x * this.scale.x;
+    const innerY = outerY + this.margin.y * this.scale.y;
 
-    // Apply margins to position
-    const labelX = pos.x + this.margin.x;
-    const labelY = pos.y + this.margin.y;
+    const outerHeight = this.labelInfo.labelSize.height * this.scale.y;
+    const outerWidth = this.labelInfo.labelSize.width * this.scale.x;
+    const innerHeight = outerHeight - this.margin.y * 2 * this.scale.y;
+    const innerWidth = outerWidth - this.margin.x * 2 * this.scale.x;
 
-    // Generate QR code as PNG buffer
-    const qrBuffer = await generateQRCodeBuffer(text, qrSize);
+    // QR Code size and position.
+    // Base size is unscaled height, as it's the limiting factor
+    const qrBaseSize = innerHeight / this.scale.y;
 
-    // Draw QR code aligned to the left
-    this.doc.image(
-      qrBuffer,
-      labelX + 1 * MM_TO_POINTS,
-      labelY + (scaledHeight - qrScaledSize) / 2,
-      {
-        width: qrScaledSize,
-        height: qrScaledSize,
-      },
+    // Scale QR code sizes independently
+    const qrWidth = qrBaseSize * this.scale.x;
+    const qrHeight = qrBaseSize * this.scale.y;
+
+    // Generate QR code buffer using the larger dimension
+    const qrBuffer = await generateQRCodeBuffer(
+      text,
+      Math.max(qrHeight, qrWidth),
     );
 
-    // Draw text centered vertically and to the right of the QR code
+    // Draw QR code with independent x/y scaling
+    this.doc.image(qrBuffer, innerX, innerY, {
+      width: qrWidth,
+      height: qrHeight,
+    });
+
+    // Calculate available space for text
+    const fontSize = 2 * MM_TO_POINTS;
+
+    const centerY = innerY + innerHeight / 2;
+    const gutter = 2 * MM_TO_POINTS * this.scale.x;
+    const textStartX = innerX + qrWidth + gutter;
+    const textStartY = centerY + fontSize * 0.38;
+    const textWidth = innerWidth - qrWidth - gutter;
+
+    // Font is not scaled as this is not supported by PDFKit.
+    // Should be good enough for small scales though.
+
+    // Draw text with scaled positions
     this.doc
       .font("Helvetica")
       .fontSize(fontSize)
-      .text(
-        text,
-        labelX + qrScaledSize + 2 * MM_TO_POINTS,
-        labelY + (scaledHeight - fontSize) / 2,
-        {
-          width:
-            scaledWidth - qrScaledSize - 3 * MM_TO_POINTS - this.margin.x * 2,
-          align: "left",
-          baseline: "top",
-        },
-      );
+      .text(text, textStartX, textStartY, {
+        width: textWidth,
+        align: "left",
+        baseline: "alphabetic",
+      });
 
     this.currentAsn += 1;
   }
@@ -182,7 +193,6 @@ export class PDFGenerator {
       }
 
       // Calculate the position within the current page
-      // By using modulo here, we ensure the position wraps within each page's grid
       const positionOnPage = labelIndex % labelsPerPage;
       const position = this.calculatePosition(positionOnPage);
       await this.renderLabel(position);
