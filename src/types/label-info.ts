@@ -45,7 +45,7 @@ export interface LabelPosition {
 
 export interface LabelGeneratorOptions {
   format: string;
-  debug?: boolean;
+  border?: boolean;
   topDown?: boolean;
   offset?: Point;
   scale?: ScaleFactor;

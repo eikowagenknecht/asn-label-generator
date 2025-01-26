@@ -44,7 +44,7 @@ export class PDFGenerator {
     this.digits = options.digits;
     this.prefix = options.prefix;
     this.topDown = options.topDown ?? true;
-    this.debug = options.debug ?? false;
+    this.debug = options.border ?? false;
 
     // Convert mm to points for offsets and margins
     this.offset = {
