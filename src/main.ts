@@ -50,10 +50,15 @@ async function main(): Promise<void> {
   try {
     const validatedOptions = cliOptionsSchema.parse(options);
 
-    const generatorOptions: LabelGeneratorOptions = {
+    const generatorOptions: LabelGeneratorOptions & {
+      startAsn: number;
+      digits: number;
+    } = {
       format: validatedOptions.format,
       debug: validatedOptions.debug,
       topDown: !validatedOptions.rowWise,
+      startAsn: validatedOptions.startAsn,
+      digits: validatedOptions.digits,
     };
 
     const generator = new PDFGenerator(generatorOptions);
@@ -68,14 +73,7 @@ async function main(): Promise<void> {
     const count =
       validatedOptions.numLabels ?? validatedOptions.pages * labelsPerPage;
 
-    const startAsn = validatedOptions.startAsn;
-    const digits = validatedOptions.digits;
-
-    generator.renderLabels(count, {
-      text: `ASN${startAsn.toString().padStart(digits, "0")}`,
-      fontSize: 12,
-    });
-
+    await generator.renderLabels(count);
     await generator.save(validatedOptions.outputFile);
     console.log(`Saved to ${validatedOptions.outputFile}`);
   } catch (error) {

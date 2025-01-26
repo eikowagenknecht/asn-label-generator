@@ -3,30 +3,34 @@ import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import PDFDocument from "pdfkit";
 import { labelInfo } from "../config/avery-labels";
+import { generateQRCodeBuffer } from "./qr-renderer";
 import type {
   LabelGeneratorOptions,
   LabelInfo,
   LabelPosition,
 } from "../types/label-info";
 
-export interface RenderOptions {
-  text: string;
-  fontSize?: number;
-}
+const POINTS_PER_MM = 2.83465;
 
 export class PDFGenerator {
   private readonly doc: PDFKit.PDFDocument;
   private readonly labelInfo: LabelInfo;
   private readonly topDown: boolean;
   private readonly debug: boolean;
+  private currentAsn: number;
+  private readonly digits: number;
 
-  constructor(options: LabelGeneratorOptions) {
+  constructor(
+    options: LabelGeneratorOptions & { startAsn: number; digits: number },
+  ) {
     const chosenLabel = labelInfo[options.format];
 
     if (!chosenLabel) {
       throw new Error(`Unknown label format: ${options.format}`);
     }
     this.labelInfo = chosenLabel;
+    this.currentAsn = options.startAsn;
+    this.digits = options.digits;
 
     this.doc = new PDFDocument({
       size: this.labelInfo.pageSize,
@@ -81,24 +85,48 @@ export class PDFGenerator {
     }
   }
 
-  private renderLabel(pos: LabelPosition, options: RenderOptions): void {
+  private async renderLabel(pos: LabelPosition): Promise<void> {
     this.drawDebugBorder(pos);
 
-    const fontSize = options.fontSize ?? 10;
-    const text = options.text;
+    const text = `ASN${this.currentAsn.toString().padStart(this.digits, "0")}`;
+    const fontSize = 2 * POINTS_PER_MM; // 2mm font size
+    const qrSize = Math.min(
+      this.labelInfo.labelSize.width,
+      this.labelInfo.labelSize.height,
+    );
+    const qrScaledSize = qrSize * 0.9;
 
+    // Generate QR code as PNG buffer
+    const qrBuffer = await generateQRCodeBuffer(text, qrSize);
+
+    // Draw QR code aligned to the left
+    this.doc.image(
+      qrBuffer,
+      pos.x + 1 * POINTS_PER_MM,
+      pos.y + (this.labelInfo.labelSize.height - qrScaledSize) / 2,
+      {
+        width: qrScaledSize,
+        height: qrScaledSize,
+      },
+    );
+
+    // Draw text centered vertically and to the right of the QR code
     this.doc
       .font("Helvetica")
       .fontSize(fontSize)
       .text(
         text,
-        pos.x,
-        pos.y + this.labelInfo.labelSize.height / 2 - fontSize / 2,
+        pos.x + qrScaledSize + 2 * POINTS_PER_MM,
+        pos.y + (this.labelInfo.labelSize.height - fontSize) / 2,
         {
-          width: this.labelInfo.labelSize.width,
-          align: "center",
+          width:
+            this.labelInfo.labelSize.width - qrScaledSize - 3 * POINTS_PER_MM,
+          align: "left",
+          baseline: "top",
         },
       );
+
+    this.currentAsn += 1;
   }
 
   public async save(outputPath: string): Promise<void> {
@@ -116,7 +144,7 @@ export class PDFGenerator {
     });
   }
 
-  public renderLabels(count: number, options: RenderOptions): void {
+  public async renderLabels(count: number): Promise<void> {
     const labelsPerPage =
       this.labelInfo.labelsHorizontal * this.labelInfo.labelsVertical;
     const fullPages = Math.floor(count / labelsPerPage);
@@ -129,7 +157,7 @@ export class PDFGenerator {
       }
       for (let i = 0; i < labelsPerPage; i++) {
         const pos = this.calculatePosition(i);
-        this.renderLabel(pos, options);
+        await this.renderLabel(pos);
       }
     }
 
@@ -140,7 +168,7 @@ export class PDFGenerator {
       }
       for (let i = 0; i < remainingLabels; i++) {
         const pos = this.calculatePosition(i);
-        this.renderLabel(pos, options);
+        await this.renderLabel(pos);
       }
     }
 
@@ -148,9 +176,5 @@ export class PDFGenerator {
     console.log(
       `Rendered ${count.toFixed()} labels on ${totalPages.toFixed()} pages.`,
     );
-  }
-
-  public renderEmptyLabels(count: number): void {
-    this.renderLabels(count, { text: "" });
   }
 }
