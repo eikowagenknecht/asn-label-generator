@@ -1,12 +1,21 @@
-// Size measurements are in points (1/72 inch) for PDFKit compatibility
-interface LabelDimensions {
-  width: number;
-  height: number;
+export interface Point {
+  x: number;
+  y: number;
 }
 
-interface LabelSpacing {
-  horizontal: number;
-  vertical: number;
+export interface Spacing {
+  x: number;
+  y: number;
+}
+
+export interface ScaleFactor {
+  x: number;
+  y: number;
+}
+
+interface Dimensions {
+  width: number;
+  height: number;
 }
 
 interface PageMargins {
@@ -14,21 +23,18 @@ interface PageMargins {
   left: number;
 }
 
+export interface LabelAdjustments {
+  offset: Point;
+  scale: ScaleFactor;
+  margin: Spacing;
+}
+
 export interface LabelInfo {
-  // Number of labels in each direction
   labelsHorizontal: number;
   labelsVertical: number;
-
-  // Size of each individual label
-  labelSize: LabelDimensions;
-
-  // Space between labels
-  gutterSize: LabelSpacing;
-
-  // Page margins
+  labelSize: Dimensions;
+  gutterSize: Spacing;
   margin: PageMargins;
-
-  // Page size in points
   pageSize: [number, number];
 }
 
@@ -41,4 +47,8 @@ export interface LabelGeneratorOptions {
   format: string;
   debug?: boolean;
   topDown?: boolean;
+  offset?: Point;
+  scale?: ScaleFactor;
+  margin?: Spacing;
+  prefix?: string;
 }

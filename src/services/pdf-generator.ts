@@ -3,12 +3,15 @@ import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import PDFDocument from "pdfkit";
 import { labelInfo } from "../config/avery-labels";
-import { generateQRCodeBuffer } from "./qr-renderer";
 import type {
   LabelGeneratorOptions,
   LabelInfo,
   LabelPosition,
+  Point,
+  ScaleFactor,
+  Spacing,
 } from "../types/label-info";
+import { generateQRCodeBuffer } from "./qr-renderer";
 
 const POINTS_PER_MM = 2.83465;
 
@@ -19,27 +22,49 @@ export class PDFGenerator {
   private readonly debug: boolean;
   private currentAsn: number;
   private readonly digits: number;
+  private readonly prefix: string;
+  private readonly offset: Point;
+  private readonly scale: ScaleFactor;
+  private readonly margin: Spacing;
 
   constructor(
-    options: LabelGeneratorOptions & { startAsn: number; digits: number },
+    options: LabelGeneratorOptions & {
+      startAsn: number;
+      digits: number;
+      prefix: string;
+    },
   ) {
     const chosenLabel = labelInfo[options.format];
-
     if (!chosenLabel) {
       throw new Error(`Unknown label format: ${options.format}`);
     }
+
     this.labelInfo = chosenLabel;
     this.currentAsn = options.startAsn;
     this.digits = options.digits;
+    this.prefix = options.prefix;
+    this.topDown = options.topDown ?? true;
+    this.debug = options.debug ?? false;
+
+    // Convert mm to points for offsets and margins
+    this.offset = {
+      x: (options.offset?.x ?? 0) * POINTS_PER_MM,
+      y: (options.offset?.y ?? 0) * POINTS_PER_MM,
+    };
+    this.scale = {
+      x: options.scale?.x ?? 1,
+      y: options.scale?.y ?? 1,
+    };
+    this.margin = {
+      x: (options.margin?.x ?? 0) * POINTS_PER_MM,
+      y: (options.margin?.y ?? 0) * POINTS_PER_MM,
+    };
 
     this.doc = new PDFDocument({
       size: this.labelInfo.pageSize,
       margin: 0,
       autoFirstPage: true,
     });
-
-    this.topDown = options.topDown ?? true;
-    this.debug = options.debug ?? false;
   }
 
   private calculatePosition(index: number): LabelPosition {
@@ -58,43 +83,43 @@ export class PDFGenerator {
       y = row;
     }
 
+    const baseX =
+      this.labelInfo.margin.left +
+      x * (this.labelInfo.labelSize.width + this.labelInfo.gutterSize.x);
+    const baseY =
+      this.labelInfo.margin.top +
+      y * (this.labelInfo.labelSize.height + this.labelInfo.gutterSize.y);
+
     return {
-      x:
-        this.labelInfo.margin.left +
-        x *
-          (this.labelInfo.labelSize.width +
-            this.labelInfo.gutterSize.horizontal),
-      y:
-        this.labelInfo.margin.top +
-        y *
-          (this.labelInfo.labelSize.height +
-            this.labelInfo.gutterSize.vertical),
+      x: baseX * this.scale.x + this.offset.x,
+      y: baseY * this.scale.y + this.offset.y,
     };
   }
 
   private drawDebugBorder(pos: LabelPosition): void {
     if (this.debug) {
-      this.doc
-        .rect(
-          pos.x,
-          pos.y,
-          this.labelInfo.labelSize.width,
-          this.labelInfo.labelSize.height,
-        )
-        .stroke();
+      const width = this.labelInfo.labelSize.width * this.scale.x;
+      const height = this.labelInfo.labelSize.height * this.scale.y;
+      this.doc.rect(pos.x, pos.y, width, height).stroke();
     }
   }
 
   private async renderLabel(pos: LabelPosition): Promise<void> {
     this.drawDebugBorder(pos);
 
-    const text = `ASN${this.currentAsn.toString().padStart(this.digits, "0")}`;
+    const text = `${this.prefix}${this.currentAsn
+      .toString()
+      .padStart(this.digits, "0")}`;
     const fontSize = 2 * POINTS_PER_MM; // 2mm font size
-    const qrSize = Math.min(
-      this.labelInfo.labelSize.width,
-      this.labelInfo.labelSize.height,
-    );
+
+    const scaledWidth = this.labelInfo.labelSize.width * this.scale.x;
+    const scaledHeight = this.labelInfo.labelSize.height * this.scale.y;
+    const qrSize = Math.min(scaledWidth, scaledHeight);
     const qrScaledSize = qrSize * 0.9;
+
+    // Apply margins to position
+    const labelX = pos.x + this.margin.x;
+    const labelY = pos.y + this.margin.y;
 
     // Generate QR code as PNG buffer
     const qrBuffer = await generateQRCodeBuffer(text, qrSize);
@@ -102,8 +127,8 @@ export class PDFGenerator {
     // Draw QR code aligned to the left
     this.doc.image(
       qrBuffer,
-      pos.x + 1 * POINTS_PER_MM,
-      pos.y + (this.labelInfo.labelSize.height - qrScaledSize) / 2,
+      labelX + 1 * POINTS_PER_MM,
+      labelY + (scaledHeight - qrScaledSize) / 2,
       {
         width: qrScaledSize,
         height: qrScaledSize,
@@ -116,11 +141,11 @@ export class PDFGenerator {
       .fontSize(fontSize)
       .text(
         text,
-        pos.x + qrScaledSize + 2 * POINTS_PER_MM,
-        pos.y + (this.labelInfo.labelSize.height - fontSize) / 2,
+        labelX + qrScaledSize + 2 * POINTS_PER_MM,
+        labelY + (scaledHeight - fontSize) / 2,
         {
           width:
-            this.labelInfo.labelSize.width - qrScaledSize - 3 * POINTS_PER_MM,
+            scaledWidth - qrScaledSize - 3 * POINTS_PER_MM - this.margin.x * 2,
           align: "left",
           baseline: "top",
         },

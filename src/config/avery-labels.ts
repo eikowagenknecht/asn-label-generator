@@ -25,8 +25,8 @@ export const labelInfo: Record<string, LabelInfo> = {
       height: 10 * MM_TO_POINTS,
     },
     gutterSize: {
-      horizontal: 2.5 * MM_TO_POINTS,
-      vertical: 0,
+      x: 2.5 * MM_TO_POINTS,
+      y: 0,
     },
     margin: {
       top: 13.5 * MM_TO_POINTS,
@@ -42,8 +42,8 @@ export const labelInfo: Record<string, LabelInfo> = {
       height: 1 * INCH_TO_POINTS,
     },
     gutterSize: {
-      horizontal: (1 / 6) * INCH_TO_POINTS,
-      vertical: 0,
+      x: (1 / 6) * INCH_TO_POINTS,
+      y: 0,
     },
     margin: {
       top: 0.5 * INCH_TO_POINTS,
@@ -60,8 +60,8 @@ export const labelInfo: Record<string, LabelInfo> = {
       height: 0.5 * INCH_TO_POINTS,
     },
     gutterSize: {
-      horizontal: 0.3 * INCH_TO_POINTS,
-      vertical: 0,
+      x: 0.3 * INCH_TO_POINTS,
+      y: 0,
     },
     margin: {
       top: 0.5 * INCH_TO_POINTS,

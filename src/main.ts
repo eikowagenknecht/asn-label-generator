@@ -13,6 +13,14 @@ const parseIntOption = (value: string): number => {
   return parsed;
 };
 
+const parseFloatOption = (value: string): number => {
+  const parsed = Number.parseFloat(value);
+  if (Number.isNaN(parsed)) {
+    throw new Error("Value must be a number");
+  }
+  return parsed;
+};
+
 const program = new Command()
   .name("label-generator")
   .description("CLI Tool for generating labels with QR codes")
@@ -20,45 +28,39 @@ const program = new Command()
   .option("-f, --format <format>", "Label format to use", "averyL4731")
   .option("-o, --output-file <file>", "Output file path", "labels.pdf")
   .option("-d, --debug", "Show debug borders", false)
-  .option(
-    "-r, --row-wise",
-    "Process labels row by row instead of column by column",
-    true,
-  )
-  .option(
-    "-n, --num-labels <number>",
-    "Number of labels to generate",
-    parseIntOption,
-  )
-  .option(
-    "-p, --pages <number>",
-    "Number of pages to generate",
-    parseIntOption,
-    1,
-  )
-  .option(
-    "--digits <number>",
-    "Number of digits in ASN (e.g., 7 produces 'ASN0000001')",
-    parseIntOption,
-    7,
-  );
+  .option("-r, --row-wise", "Process labels row by row", true)
+  .option("-n, --num-labels <number>", "Number of labels", parseIntOption)
+  .option("-p, --pages <number>", "Number of pages", parseIntOption, 1)
+  .option("--digits <number>", "Digits in number", parseIntOption, 7)
+  .option("--prefix <text>", "Prefix for labels", "ASN")
+  .option("--offset-x <mm>", "X offset in mm", parseFloatOption, 0)
+  .option("--offset-y <mm>", "Y offset in mm", parseFloatOption, 0)
+  .option("--scale-x <factor>", "X scale factor", parseFloatOption, 1)
+  .option("--scale-y <factor>", "Y scale factor", parseFloatOption, 1)
+  .option("--margin-x <mm>", "X margin in mm", parseFloatOption, 0)
+  .option("--margin-y <mm>", "Y margin in mm", parseFloatOption, 0);
 
 async function main(): Promise<void> {
   program.parse();
-  const options = program.opts();
+  const opts = program.opts();
 
   try {
-    const validatedOptions = cliOptionsSchema.parse(options);
+    const validatedOptions = cliOptionsSchema.parse(opts);
 
     const generatorOptions: LabelGeneratorOptions & {
       startAsn: number;
       digits: number;
+      prefix: string;
     } = {
       format: validatedOptions.format,
       debug: validatedOptions.debug,
       topDown: !validatedOptions.rowWise,
       startAsn: validatedOptions.startAsn,
       digits: validatedOptions.digits,
+      prefix: validatedOptions.prefix,
+      offset: { x: validatedOptions.offsetX, y: validatedOptions.offsetY },
+      scale: { x: validatedOptions.scaleX, y: validatedOptions.scaleY },
+      margin: { x: validatedOptions.marginX, y: validatedOptions.marginY },
     };
 
     const generator = new PDFGenerator(generatorOptions);
