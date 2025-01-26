@@ -10,7 +10,7 @@
         "${workspaceFolder}/node_modules/**"
       ],
       "program": "${workspaceFolder}/node_modules/vite-node/dist/cli.mjs",
-      "args": ["src/main.ts", "--skip", "10"],
+      "args": ["src/main.ts", "--border"],
       "autoAttachChildProcesses": true,
       "sourceMaps": true,
       "console": "integratedTerminal",

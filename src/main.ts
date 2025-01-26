@@ -48,8 +48,8 @@ const program = new Command()
   .option("--offset-y <mm>", "Y offset in mm", parseFloatArg, 0)
   .option("--scale-x <factor>", "X scale factor", parseFloatArg, 1)
   .option("--scale-y <factor>", "Y scale factor", parseFloatArg, 1)
-  .option("--margin-x <mm>", "X margin in mm", parseFloatArg, 0)
-  .option("--margin-y <mm>", "Y margin in mm", parseFloatArg, 0);
+  .option("--margin-x <mm>", "X margin in mm", parseFloatArg, 2)
+  .option("--margin-y <mm>", "Y margin in mm", parseFloatArg, 2);
 
 async function main(): Promise<void> {
   program.parse();

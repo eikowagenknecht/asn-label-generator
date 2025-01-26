@@ -23,12 +23,6 @@ interface PageMargins {
   left: number;
 }
 
-export interface LabelAdjustments {
-  offset: Point;
-  scale: ScaleFactor;
-  margin: Spacing;
-}
-
 export interface LabelInfo {
   labelsX: number;
   labelsY: number;
