@@ -112,6 +112,16 @@ export class PDFGenerator {
     const innerHeight = outerHeight - this.margin.y * 2 * this.scale.y;
     const innerWidth = outerWidth - this.margin.x * 2 * this.scale.x;
 
+    // Don't render if the label is outside the page
+    if (
+      outerX + outerWidth > this.doc.page.width ||
+      outerY + outerHeight > this.doc.page.height ||
+      outerX < 0 ||
+      outerY < 0
+    ) {
+      return;
+    }
+
     // QR Code size and position.
     // Base size is unscaled height, as it's the limiting factor
     const qrBaseSize = innerHeight / this.scale.y;
@@ -132,27 +142,28 @@ export class PDFGenerator {
       height: qrHeight,
     });
 
-    // Calculate available space for text
-    const fontSize = 2 * MM_TO_POINTS;
-
-    const centerY = innerY + innerHeight / 2;
     const gutter = 2 * MM_TO_POINTS * this.scale.x;
+    const maxTextWidth = innerWidth - qrWidth - gutter;
+
+    // Find out the font size based on available space
+    this.doc.fontSize(1);
+    // Small margin as not all characters are the same width
+    const fontSize = (maxTextWidth / this.doc.widthOfString(text)) * 0.95;
+    this.doc.fontSize(fontSize);
+
+    // Calculate available space for text
+    const centerY = innerY + innerHeight / 2;
     const textStartX = innerX + qrWidth + gutter;
     const textStartY = centerY + fontSize * 0.38;
-    const textWidth = innerWidth - qrWidth - gutter;
 
-    // Font is not scaled as this is not supported by PDFKit.
+    // Font is always scaled in both axis, as this is not supported by PDFKit.
     // Should be good enough for small scales though.
 
-    // Draw text with scaled positions
-    this.doc
-      .font("Helvetica")
-      .fontSize(fontSize)
-      .text(text, textStartX, textStartY, {
-        width: textWidth,
-        align: "left",
-        baseline: "alphabetic",
-      });
+    this.doc.font("Helvetica").text(text, textStartX, textStartY, {
+      width: maxTextWidth,
+      align: "left",
+      baseline: "alphabetic",
+    });
 
     this.currentAsn += 1;
   }

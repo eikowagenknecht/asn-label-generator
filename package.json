@@ -11,6 +11,9 @@
   "engines": {
     "node": ">=22.0.0"
   },
+  "pnpm": {
+    "onlyBuiltDependencies": ["@biomejs/biome", "esbuild", "lefthook"]
+  },
   "scripts": {
     "dev": "vite-node src/main.ts",
     "build": "vite build",
@@ -37,12 +40,12 @@
     "@commitlint/cli": "19.6.1",
     "@commitlint/config-conventional": "19.6.0",
     "@commitlint/types": "19.5.0",
-    "@eslint/js": "9.18.0",
+    "@eslint/js": "9.19.0",
     "@types/node": "22.10.10",
     "@types/pdfkit": "0.13.8",
     "@types/qrcode": "1.5.5",
     "@vitest/coverage-v8": "3.0.4",
-    "eslint": "9.18.0",
+    "eslint": "9.19.0",
     "globals": "15.14.0",
     "knip": "5.43.3",
     "lefthook": "1.10.10",

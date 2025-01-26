@@ -4,21 +4,22 @@ import { defineConfig } from "vite";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [],
   // Resolve @/ to the source root directory
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
   },
+
   build: {
     // Generate source maps for better debugging
     sourcemap: true,
+
     lib: {
       // Set the entry point
       entry: "src/main.ts",
       // The name of your CLI tool
-      name: "template-project",
+      name: "asn-label-generator",
       // The formats to build
       formats: ["es"],
       // The name of the output file
@@ -28,12 +29,18 @@ export default defineConfig({
     rollupOptions: {
       // External packages that shouldn't be bundled
       external: [
-        // Add any packages that should be external here
+        // Node.js built-in modules
+        "node:fs",
+        "node:path",
+        "node:fs/promises",
+        // Dependencies from package.json
+        "commander",
+        "pdfkit",
+        "qrcode",
+        "zod",
       ],
     },
   },
-  // Prevent vite from obscuring errors in the console
-  clearScreen: false,
   test: {
     include: ["**/*.{test,spec}.?(c|m)[jt]s?(x)", "tests/**/*.?(c|m)[jt]s?(x)"],
     coverage: {
