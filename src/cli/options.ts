@@ -8,10 +8,11 @@ export const cliOptionsSchema = z.object({
   }),
   outputFile: z.string(),
   border: z.boolean(),
-  rowWise: z.boolean(),
+  topDown: z.boolean(),
   numLabels: z.number().int().positive().optional(),
   pages: z.number().int().positive(),
   digits: z.number().int().positive(),
+  skip: z.number().int().nonnegative(),
   prefix: z.string(),
   offsetX: z.number(), // Float, can be negative
   offsetY: z.number(), // Float, can be negative

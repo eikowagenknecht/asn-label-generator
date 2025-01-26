@@ -45,10 +45,13 @@ export interface LabelPosition {
 
 export interface LabelGeneratorOptions {
   format: string;
-  border?: boolean;
-  topDown?: boolean;
-  offset?: Point;
-  scale?: ScaleFactor;
-  margin?: Spacing;
-  prefix?: string;
+  border: boolean;
+  topDown: boolean;
+  offset: Point;
+  scale: ScaleFactor;
+  margin: Spacing;
+  skip: number;
+  startAsn: number;
+  digits: number;
+  prefix: string;
 }

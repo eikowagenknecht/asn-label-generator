@@ -32,10 +32,11 @@ const program = new Command()
   )
   .option("-n, --num-labels <number>", "Number of labels", parsePositiveIntArg)
   .option("-p, --pages <number>", "Number of pages", parsePositiveIntArg, 1)
+  .option("--skip <number>", "Skip first N labels", parsePositiveIntArg, 0)
   .option("-f, --format <format>", "Label format to use", "averyL4731")
   .option("-o, --output-file <file>", "Output file path", "labels.pdf")
   .option("--border", "Draw borders", false)
-  .option("--row-wise", "Process labels by row instead of by column", false)
+  .option("--top-down", "Order labels by col instead of by row", false)
   .option("--digits <number>", "Digits in number", parsePositiveIntArg, 5)
   .option("--prefix <text>", "Prefix for labels", "ASN")
   .option("--offset-x <mm>", "X offset in mm", parseFloatArg, 0)
@@ -52,20 +53,17 @@ async function main(): Promise<void> {
   try {
     const validatedOptions = cliOptionsSchema.parse(opts);
 
-    const generatorOptions: LabelGeneratorOptions & {
-      startAsn: number;
-      digits: number;
-      prefix: string;
-    } = {
+    const generatorOptions: LabelGeneratorOptions = {
       format: validatedOptions.format,
       border: validatedOptions.border,
-      topDown: !validatedOptions.rowWise,
+      topDown: validatedOptions.topDown,
       startAsn: validatedOptions.startAsn,
       digits: validatedOptions.digits,
       prefix: validatedOptions.prefix,
       offset: { x: validatedOptions.offsetX, y: validatedOptions.offsetY },
       scale: { x: validatedOptions.scaleX, y: validatedOptions.scaleY },
       margin: { x: validatedOptions.marginX, y: validatedOptions.marginY },
+      skip: validatedOptions.skip,
     };
 
     const generator = new PDFGenerator(generatorOptions);

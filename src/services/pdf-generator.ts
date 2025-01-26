@@ -19,21 +19,16 @@ export class PDFGenerator {
   private readonly doc: PDFKit.PDFDocument;
   private readonly labelInfo: LabelInfo;
   private readonly topDown: boolean;
-  private readonly debug: boolean;
+  private readonly border: boolean;
   private currentAsn: number;
   private readonly digits: number;
   private readonly prefix: string;
   private readonly offset: Point;
   private readonly scale: ScaleFactor;
   private readonly margin: Spacing;
+  private readonly skip: number;
 
-  constructor(
-    options: LabelGeneratorOptions & {
-      startAsn: number;
-      digits: number;
-      prefix: string;
-    },
-  ) {
+  constructor(options: LabelGeneratorOptions) {
     const chosenLabel = labelInfo[options.format];
     if (!chosenLabel) {
       throw new Error(`Unknown label format: ${options.format}`);
@@ -43,21 +38,19 @@ export class PDFGenerator {
     this.currentAsn = options.startAsn;
     this.digits = options.digits;
     this.prefix = options.prefix;
-    this.topDown = options.topDown ?? true;
-    this.debug = options.border ?? false;
+    this.skip = options.skip;
+    this.topDown = options.topDown;
+    this.border = options.border;
+    this.scale = options.scale;
 
     // Convert mm to points for offsets and margins
     this.offset = {
-      x: (options.offset?.x ?? 0) * POINTS_PER_MM,
-      y: (options.offset?.y ?? 0) * POINTS_PER_MM,
-    };
-    this.scale = {
-      x: options.scale?.x ?? 1,
-      y: options.scale?.y ?? 1,
+      x: options.offset.x * POINTS_PER_MM,
+      y: options.offset.y * POINTS_PER_MM,
     };
     this.margin = {
-      x: (options.margin?.x ?? 0) * POINTS_PER_MM,
-      y: (options.margin?.y ?? 0) * POINTS_PER_MM,
+      x: options.margin.x * POINTS_PER_MM,
+      y: options.margin.y * POINTS_PER_MM,
     };
 
     this.doc = new PDFDocument({
@@ -97,7 +90,7 @@ export class PDFGenerator {
   }
 
   private drawDebugBorder(pos: LabelPosition): void {
-    if (this.debug) {
+    if (this.border) {
       const width = this.labelInfo.labelSize.width * this.scale.x;
       const height = this.labelInfo.labelSize.height * this.scale.y;
       this.doc.rect(pos.x, pos.y, width, height).stroke();
@@ -172,15 +165,23 @@ export class PDFGenerator {
   public async renderLabels(count: number): Promise<void> {
     const labelsPerPage =
       this.labelInfo.labelsHorizontal * this.labelInfo.labelsVertical;
-    const fullPages = Math.floor(count / labelsPerPage);
-    const remainingLabels = count % labelsPerPage;
+    const totalCount = count;
+    const fullPages = Math.floor(totalCount / labelsPerPage);
+    const remainingLabels = totalCount % labelsPerPage;
+
+    if (this.skip >= labelsPerPage) {
+      throw new Error("Skip value is larger than labels per page.");
+    }
 
     // Render full pages
     for (let page = 0; page < fullPages; page++) {
       if (page > 0) {
         this.doc.addPage();
       }
-      for (let i = 0; i < labelsPerPage; i++) {
+
+      // Skip labels if needed on the first page
+      const startIdx = page === 0 ? this.skip : 0;
+      for (let i = startIdx; i < labelsPerPage; i++) {
         const pos = this.calculatePosition(i);
         await this.renderLabel(pos);
       }
@@ -197,9 +198,10 @@ export class PDFGenerator {
       }
     }
 
+    const actualCount = totalCount - this.skip;
     const totalPages = fullPages + (remainingLabels > 0 ? 1 : 0);
     console.log(
-      `Rendered ${count.toFixed()} labels on ${totalPages.toFixed()} pages.`,
+      `Rendered ${actualCount.toFixed()} labels on ${totalPages.toFixed()} pages.`,
     );
   }
 }
