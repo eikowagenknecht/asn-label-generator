@@ -23,33 +23,43 @@ const parseFloatArg = (value: string): number => {
 
 const program = new Command()
   .name("label-generator")
-  .description("CLI Tool for generating labels with QR codes")
-  .option(
-    "-s, --start-asn <number>",
-    "Starting ASN number",
-    parsePositiveIntArg,
-    1,
+  .description(
+    "CLI Tool for generating labels with QR codes.\nSee https://github.com/eikowagenknecht/asn-label-generator for more information.",
   )
-  .option("-n, --num-labels <number>", "Number of labels", parsePositiveIntArg)
   .option(
     "-p, --pages <number>",
-    "Number of pages. Ignored if number of labels is set.",
+    "number of pages. Ignored if number of labels is set",
     parsePositiveIntArg,
     1,
   )
-  .option("--skip <number>", "Skip first N labels", parsePositiveIntArg, 0)
-  .option("-f, --format <format>", "Label format to use", "averyL4731")
-  .option("-o, --output-file <file>", "Output file path", "labels.pdf")
-  .option("--border", "Draw borders", false)
-  .option("--top-down", "Order labels by col instead of by row", false)
-  .option("--digits <number>", "Digits in number", parsePositiveIntArg, 5)
-  .option("--prefix <text>", "Prefix for labels", "ASN")
-  .option("--offset-x <mm>", "X offset in mm", parseFloatArg, 0)
-  .option("--offset-y <mm>", "Y offset in mm", parseFloatArg, 0)
-  .option("--scale-x <factor>", "X scale factor", parseFloatArg, 1)
-  .option("--scale-y <factor>", "Y scale factor", parseFloatArg, 1)
-  .option("--margin-x <mm>", "X margin in mm", parseFloatArg, 2)
-  .option("--margin-y <mm>", "Y margin in mm", parseFloatArg, 2);
+  .option(
+    "-n, --num-labels <number>",
+    "number of labels. If this is set, --pages is ignored",
+    parsePositiveIntArg,
+  )
+  .option("-o, --output-file <file>", "output file path", "labels.pdf")
+  .option(
+    "-s, --start-asn <number>",
+    "starting ASN number",
+    parsePositiveIntArg,
+    1,
+  )
+  .option("-b, --border", "draw borders", false)
+  .option("-t, --top-down", "order labels by col instead of by row", false)
+  .option("-d, --digits <number>", "digits in number", parsePositiveIntArg, 5)
+  .option("--prefix <text>", "prefix for labels", "ASN")
+  .option("--skip <number>", "skip first N labels", parsePositiveIntArg, 0)
+  .option(
+    "--format <format>",
+    'label format to use. currently only "averyL4731" is supported. create an issue if you need another one.',
+    "averyL4731",
+  )
+  .option("--offset-x <mm>", "x offset in mm", parseFloatArg, 0)
+  .option("--offset-y <mm>", "y offset in mm", parseFloatArg, 0)
+  .option("--scale-x <factor>", "x scale factor", parseFloatArg, 1)
+  .option("--scale-y <factor>", "y scale factor", parseFloatArg, 1)
+  .option("--margin-x <mm>", "x margin in mm", parseFloatArg, 1)
+  .option("--margin-y <mm>", "y margin in mm", parseFloatArg, 1);
 
 async function main(): Promise<void> {
   program.parse();
