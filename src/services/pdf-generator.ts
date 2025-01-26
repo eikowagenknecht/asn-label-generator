@@ -9,6 +9,11 @@ import type {
   LabelPosition,
 } from "../types/label-info";
 
+export interface RenderOptions {
+  text: string;
+  fontSize?: number;
+}
+
 export class PDFGenerator {
   private readonly doc: PDFKit.PDFDocument;
   private readonly labelInfo: LabelInfo;
@@ -63,7 +68,7 @@ export class PDFGenerator {
     };
   }
 
-  public drawDebugBorder(pos: LabelPosition): void {
+  private drawDebugBorder(pos: LabelPosition): void {
     if (this.debug) {
       this.doc
         .rect(
@@ -74,6 +79,26 @@ export class PDFGenerator {
         )
         .stroke();
     }
+  }
+
+  private renderLabel(pos: LabelPosition, options: RenderOptions): void {
+    this.drawDebugBorder(pos);
+
+    const fontSize = options.fontSize ?? 10;
+    const text = options.text;
+
+    this.doc
+      .font("Helvetica")
+      .fontSize(fontSize)
+      .text(
+        text,
+        pos.x,
+        pos.y + this.labelInfo.labelSize.height / 2 - fontSize / 2,
+        {
+          width: this.labelInfo.labelSize.width,
+          align: "center",
+        },
+      );
   }
 
   public async save(outputPath: string): Promise<void> {
@@ -91,7 +116,7 @@ export class PDFGenerator {
     });
   }
 
-  public renderEmptyLabels(count: number): void {
+  public renderLabels(count: number, options: RenderOptions): void {
     const labelsPerPage =
       this.labelInfo.labelsHorizontal * this.labelInfo.labelsVertical;
     const fullPages = Math.floor(count / labelsPerPage);
@@ -104,7 +129,7 @@ export class PDFGenerator {
       }
       for (let i = 0; i < labelsPerPage; i++) {
         const pos = this.calculatePosition(i);
-        this.drawDebugBorder(pos);
+        this.renderLabel(pos, options);
       }
     }
 
@@ -115,7 +140,7 @@ export class PDFGenerator {
       }
       for (let i = 0; i < remainingLabels; i++) {
         const pos = this.calculatePosition(i);
-        this.drawDebugBorder(pos);
+        this.renderLabel(pos, options);
       }
     }
 
@@ -123,5 +148,9 @@ export class PDFGenerator {
     console.log(
       `Rendered ${count.toFixed()} labels on ${totalPages.toFixed()} pages.`,
     );
+  }
+
+  public renderEmptyLabels(count: number): void {
+    this.renderLabels(count, { text: "" });
   }
 }
