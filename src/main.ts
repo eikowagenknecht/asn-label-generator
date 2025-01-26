@@ -78,8 +78,7 @@ async function main(): Promise<void> {
       throw new Error(`Unknown label format: ${validatedOptions.format}`);
     }
 
-    const labelsPerPage =
-      labelFormat.labelsX * labelFormat.labelsY;
+    const labelsPerPage = labelFormat.labelsX * labelFormat.labelsY;
     const count =
       validatedOptions.numLabels ?? validatedOptions.pages * labelsPerPage;
 

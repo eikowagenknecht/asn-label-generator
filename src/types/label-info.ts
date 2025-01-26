@@ -35,7 +35,7 @@ export interface LabelInfo {
   labelSize: Dimensions;
   gutterSize: Spacing;
   margin: PageMargins;
-  pageSize: [number, number];
+  pageSize: string;
 }
 
 export interface LabelPosition {
