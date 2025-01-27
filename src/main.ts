@@ -46,7 +46,7 @@ const program = new Command()
   )
   .option("-b, --border", "draw borders", false)
   .option("-t, --top-down", "order labels by col instead of by row", false)
-  .option("-d, --digits <number>", "digits in number", parsePositiveIntArg, 5)
+  .option("-d, --digits <number>", "digits in number", parsePositiveIntArg, 6)
   .option("--prefix <text>", "prefix for labels", "ASN")
   .option("--skip <number>", "skip first N labels", parsePositiveIntArg, 0)
   .option(
