@@ -1,15 +1,17 @@
 {
   "name": "asn-label-generator",
-  "private": true,
   "version": "1.0.0",
   "description": "CLI Tool for generating ASN labels with QR codes",
+  "author": "Eiko Wagenknecht <git@eiko-wagenknecht.de>",
   "type": "module",
   "main": "dist/main.js",
   "bin": {
     "asn-label-generator": "./dist/main.js"
   },
+  "packageManager": "pnpm@9.15.4",
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=22.0.0",
+    "pnpm": ">=9.0.0"
   },
   "pnpm": {
     "onlyBuiltDependencies": ["@biomejs/biome", "esbuild", "lefthook"]
@@ -19,14 +21,15 @@
     "build": "vite build",
     "start": "node dist/main.js",
     "lint": "tsc --noEmit && eslint --fix ./src && prettier --write ./src && biome check --fix --unsafe ./src",
-    "lint:biome": "biome check --fix --unsafe ./src",
     "lint:eslint": "eslint --fix ./src",
     "lint:prettier": "prettier --write ./src",
-    "test": "vitest",
-    "test:coverage": "vitest run --coverage",
-    "clean:npm": "pnpm exec rm -rf node_modules && pnpm exec rm pnpm-lock.yaml",
+    "lint:biome": "biome check --fix --unsafe ./src",
+    "format": "biome format . --write",
+    "type-check": "tsc --noEmit",
+    "check": "pnpm run lint && pnpm run type-check",
+    "clean:npm": "pnpm exec rm -rf node_modules",
     "sync:npm": "pnpm i --frozen-lockfile",
-    "upgrade:npm": "pnpm up --latest && pnpm i",
+    "upgrade:npm": "pnpm exec rm pnpm-lock.yaml && pnpm up --latest && pnpm i",
     "knip": "knip"
   },
   "dependencies": {
