@@ -118,6 +118,12 @@ Adjust label positioning for your printer (offset values in millimeters):
 asn-label-generator --offset-x 0.5 --offset-y -0.2 --scale-x 0.98
 ```
 
+As an example, my Brother HL-L2350DW printer requires the following adjustments to manage to print the label content in the middle of each label:
+
+```bash
+asn-label-generator --offset-x 0 --offset-y -0.5 --scale-x 1.0 --scale-y 0.994475
+```
+
 ### All Available Options
 
 ```txt
