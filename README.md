@@ -191,3 +191,12 @@ Built with:
 - [Zod](https://github.com/colinhacks/zod) for runtime type checking
 
 Special thanks to the paperless-ngx community for inspiration and feedback.
+
+If this project is not exactly what you're looking for, you might also be interested in the alternatives:
+
+- [tmiaier/asn-qr-code-label-generator](https://github.com/tmaier/asn-qr-code-label-generator)
+  - A web-based version with less customization options
+- [entropia/paperless-asn-qr-codes](https://github.com/entropia/paperless-asn-qr-codes)
+  - A similar tool built with Python with support for more label formats but no custom prefixes or offsets
+- [aborelis/ASN-Label-Generator](https://github.com/aborelis/ASN-Label-Generator)
+  - A similar tool built with Python with support for colored labels
