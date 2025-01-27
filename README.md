@@ -199,4 +199,4 @@ If this project is not exactly what you're looking for, you might also be intere
 - [entropia/paperless-asn-qr-codes](https://github.com/entropia/paperless-asn-qr-codes)
   - A similar tool built with Python with support for more label formats but no custom prefixes or offsets
 - [aborelis/ASN-Label-Generator](https://github.com/aborelis/ASN-Label-Generator)
-  - A similar tool built with Python with support for colored labels
+  - A similar tool built with Python with support for colored labels, based on [gitolicious/averyasn](https://github.com/gitolicious/avery-asn) based on [timrprobocom/AveryLabels.py](https://gist.github.com/timrprobocom/3946aca8ab75df8267bbf892a427a1b7)
