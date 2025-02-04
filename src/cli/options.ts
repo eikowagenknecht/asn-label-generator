@@ -13,7 +13,8 @@ export const cliOptionsSchema = z.object({
   pages: z.number().int().positive(),
   digits: z.number().int().positive(),
   skip: z.number().int().nonnegative(),
-  prefix: z.string(),
+  prefixQR: z.string(),
+  prefixPrint: z.string(),
   offsetX: z.number(), // Float, can be negative
   offsetY: z.number(), // Float, can be negative
   scaleX: z.number(), // Float, can be negative

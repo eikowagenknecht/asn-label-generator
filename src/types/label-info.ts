@@ -47,5 +47,6 @@ export interface LabelGeneratorOptions {
   skip: number;
   startAsn: number;
   digits: number;
-  prefix: string;
+  prefixQR: string;
+  prefixPrint: string;
 }

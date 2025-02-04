@@ -91,12 +91,14 @@ Generate labels for a large batch of documents:
 asn-label-generator --pages 3 --start-asn 1000
 ```
 
-Use custom prefixes for different document types:
+Use custom prefixes for different document types so you can easily distinguish the labels:
 
 ```bash
-asn-label-generator --prefix "P" --digits 6  # For private documents
-asn-label-generator --prefix "B" --digits 6  # For business documents
+asn-label-generator --prefixPrint "P" --digits 6  # For private documents
+asn-label-generator --prefixPrint "B" --digits 6  # For business documents
 ```
+
+The QR code itself will still contain `ASN` followed by the number, you can set this indivuidally with the `--prefixQR` option.
 
 Continue from a partially used sheet:
 
@@ -135,7 +137,8 @@ Options:
   -b, --border            draw borders for testing
   -t, --top-down          order labels by column instead of by row
   -d, --digits <number>   digits in number (default: 5)
-  --prefix <text>         prefix for labels (default: "ASN")
+  --prefixQR <text>       prefix for labels embedded in the QR code (default: "ASN")
+  --prefixPrint <text>    prefix for labels printed on the label (default: "ASN")
   --skip <number>         skip first N labels (default: 0)
   --format <format>       label format (default: "averyL4731")
   --offset-x <mm>         x offset in mm (default: 0)

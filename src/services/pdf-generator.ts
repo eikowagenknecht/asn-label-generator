@@ -21,7 +21,8 @@ export class PDFGenerator {
   private readonly border: boolean;
   private currentAsn: number;
   private readonly digits: number;
-  private readonly prefix: string;
+  private readonly prefixQR: string;
+  private readonly prefixPrint: string;
   private readonly offset: Point;
   private readonly scale: ScaleFactor;
   private readonly margin: Spacing;
@@ -36,7 +37,8 @@ export class PDFGenerator {
     this.labelInfo = chosenLabel;
     this.currentAsn = options.startAsn;
     this.digits = options.digits;
-    this.prefix = options.prefix;
+    this.prefixQR = options.prefixQR;
+    this.prefixPrint = options.prefixPrint;
     this.skip = options.skip;
     this.topDown = options.topDown;
     this.border = options.border;
@@ -97,7 +99,11 @@ export class PDFGenerator {
     this.drawDebugBorder(pos);
 
     // Text to QR encode and render
-    const text = `${this.prefix}${this.currentAsn
+    const textQR = `${this.prefixQR}${this.currentAsn
+      .toString()
+      .padStart(this.digits, "0")}`;
+
+    const textPrint = `${this.prefixPrint}${this.currentAsn
       .toString()
       .padStart(this.digits, "0")}`;
 
@@ -132,7 +138,7 @@ export class PDFGenerator {
 
     // Generate QR code buffer using the larger dimension
     const qrBuffer = await generateQRCodeBuffer(
-      text,
+      textQR,
       Math.max(qrHeight, qrWidth),
     );
 
@@ -148,7 +154,7 @@ export class PDFGenerator {
     // Find out the font size based on available space
     this.doc.fontSize(1);
     // Small margin as not all characters are the same width
-    const fontSize = (maxTextWidth / this.doc.widthOfString(text)) * 0.95;
+    const fontSize = (maxTextWidth / this.doc.widthOfString(textPrint)) * 0.95;
     this.doc.fontSize(fontSize);
 
     // Calculate available space for text
@@ -159,7 +165,7 @@ export class PDFGenerator {
     // Font is always scaled in both axis, as this is not supported by PDFKit.
     // Should be good enough for small scales though.
 
-    this.doc.font("Helvetica").text(text, textStartX, textStartY, {
+    this.doc.font("Helvetica").text(textPrint, textStartX, textStartY, {
       width: maxTextWidth,
       align: "left",
       baseline: "alphabetic",

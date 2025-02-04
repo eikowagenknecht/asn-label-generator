@@ -47,7 +47,16 @@ const program = new Command()
   .option("-b, --border", "draw borders", false)
   .option("-t, --top-down", "order labels by col instead of by row", false)
   .option("-d, --digits <number>", "digits in number", parsePositiveIntArg, 6)
-  .option("--prefix <text>", "prefix for labels", "ASN")
+  .option(
+    "--prefixQR <text>",
+    "prefix for labels embedded in the QR code",
+    "ASN",
+  )
+  .option(
+    "--prefixPrint <text>",
+    "prefix for labels printed on the label",
+    "ASN",
+  )
   .option("--skip <number>", "skip first N labels", parsePositiveIntArg, 0)
   .option(
     "--format <format>",
@@ -74,7 +83,8 @@ async function main(): Promise<void> {
       topDown: validatedOptions.topDown,
       startAsn: validatedOptions.startAsn,
       digits: validatedOptions.digits,
-      prefix: validatedOptions.prefix,
+      prefixQR: validatedOptions.prefixQR,
+      prefixPrint: validatedOptions.prefixPrint,
       offset: { x: validatedOptions.offsetX, y: validatedOptions.offsetY },
       scale: { x: validatedOptions.scaleX, y: validatedOptions.scaleY },
       margin: { x: validatedOptions.marginX, y: validatedOptions.marginY },
