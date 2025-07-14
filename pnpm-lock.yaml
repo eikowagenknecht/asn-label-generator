@@ -18,8 +18,8 @@ importers:
         specifier: 1.5.4
         version: 1.5.4
       zod:
-        specifier: 3.25.74
-        version: 3.25.74
+        specifier: 4.0.5
+        version: 4.0.5
     devDependencies:
       '@biomejs/biome':
         specifier: 2.0.6
@@ -1921,6 +1921,9 @@ packages:
   zod@3.25.74:
     resolution: {integrity: sha512-J8poo92VuhKjNknViHRAIuuN6li/EwFbAC8OedzI8uxpEPGiXHGQu9wemIAioIpqgfB4SySaJhdk0mH5Y4ICBg==}
 
+  zod@4.0.5:
+    resolution: {integrity: sha512-/5UuuRPStvHXu7RS+gmvRf4NXrNxpSllGwDnCBcJZtQsKrviYXm54yDGV2KYNLT5kq0lHGcl7lqWJLgSaG+tgA==}
+
 snapshots:
 
   '@ampproject/remapping@2.3.0':
@@ -3693,3 +3696,5 @@ snapshots:
       zod: 3.25.74
 
   zod@3.25.74: {}
+
+  zod@4.0.5: {}
