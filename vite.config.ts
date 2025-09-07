@@ -17,7 +17,7 @@ export default defineConfig({
 
     lib: {
       // Set the entry point
-      entry: "src/main.ts",
+      entry: "src/cli/main.ts",
       // The name of your CLI tool
       name: "asn-label-generator",
       // The formats to build
@@ -35,7 +35,7 @@ export default defineConfig({
         "node:fs/promises",
         // Dependencies from package.json
         "commander",
-        "pdfkit",
+        "jspdf",
         "qrcode",
         "zod",
       ],
