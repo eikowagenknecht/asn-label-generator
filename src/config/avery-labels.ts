@@ -1,22 +1,23 @@
-import { MM_TO_POINTS } from "@/util/const";
 import type { LabelInfo } from "../types/label-info";
 
 export const labelInfo: Record<string, LabelInfo> = {
   averyL4731: {
-    labelsX: 7,
-    labelsY: 27,
-    labelSize: {
-      width: 25.4 * MM_TO_POINTS,
-      height: 10 * MM_TO_POINTS,
+    pageFormat: "a4", // See https://artskydj.github.io/jsPDF/docs/jsPDF.html for supported formats
+    numLabels: {
+      x: 7,
+      y: 27,
     },
-    gutterSize: {
-      x: 2.5 * MM_TO_POINTS,
+    labelSizeInMm: {
+      width: 25.4,
+      height: 10,
+    },
+    gutterSizeInMm: {
+      x: 2.5,
       y: 0,
     },
-    margin: {
-      top: 13.5 * MM_TO_POINTS,
-      left: 9 * MM_TO_POINTS,
+    marginInMm: {
+      top: 13.5,
+      left: 9,
     },
-    pageSize: "A4",
   },
 } as const;
