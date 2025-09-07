@@ -1,6 +1,6 @@
-/// <reference types="vitest" />
 import path from "node:path";
 import { defineConfig } from "vite";
+import tailwindcss from '@tailwindcss/vite'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -10,6 +10,8 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+
+  plugins: [tailwindcss()],
 
   build: {
     // Generate source maps for better debugging
@@ -39,13 +41,6 @@ export default defineConfig({
         "qrcode",
         "zod",
       ],
-    },
-  },
-  test: {
-    include: ["**/*.{test,spec}.?(c|m)[jt]s?(x)", "tests/**/*.?(c|m)[jt]s?(x)"],
-    coverage: {
-      provider: "v8",
-      include: ["src/**"],
     },
   },
 });
