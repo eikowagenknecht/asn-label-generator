@@ -1,20 +1,5 @@
 import QRCode from "qrcode";
 
-export async function generateQRCodeBuffer(
-  text: string,
-  size: number,
-): Promise<Buffer> {
-  // Use a larger base size for better quality, otherwise the QR code will not be readable
-  const scaleFactor = 8;
-
-  return QRCode.toBuffer(text, {
-    width: size * scaleFactor,
-    margin: 0,
-    scale: 1,
-    type: "png",
-  });
-}
-
 export async function generateQRCodeDataURL(text: string): Promise<string> {
   // Generate QR code with 1 pixel per module for minimal size and perfect alignment
   // Let the QRCode library determine the natural size, then let PDF scaling handle the sizing
