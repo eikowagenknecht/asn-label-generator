@@ -1,7 +1,6 @@
-import { createWriteStream } from "node:fs";
-import { mkdir } from "node:fs/promises";
+import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import PDFDocument from "pdfkit";
+import { jsPDF } from "jspdf";
 import { MM_TO_POINTS } from "@/util/const";
 import { labelInfo } from "../config/avery-labels";
 import type {
@@ -12,10 +11,10 @@ import type {
   ScaleFactor,
   Spacing,
 } from "../types/label-info";
-import { generateQRCodeBuffer } from "./qr-renderer";
+import { generateQRCodeDataURL } from "./qr-renderer";
 
 export class PDFGenerator {
-  private readonly doc: PDFKit.PDFDocument;
+  private readonly doc: jsPDF;
   private readonly labelInfo: LabelInfo;
   private readonly topDown: boolean;
   private readonly border: boolean;
@@ -44,20 +43,21 @@ export class PDFGenerator {
     this.border = options.border;
     this.scale = options.scale;
 
-    // Convert mm to points for offsets and margins
+    // jsPDF works in mm by default, so no conversion needed for offsets and margins
     this.offset = {
-      x: options.offset.x * MM_TO_POINTS,
-      y: options.offset.y * MM_TO_POINTS,
+      x: options.offset.x,
+      y: options.offset.y,
     };
     this.margin = {
-      x: options.margin.x * MM_TO_POINTS,
-      y: options.margin.y * MM_TO_POINTS,
+      x: options.margin.x,
+      y: options.margin.y,
     };
 
-    this.doc = new PDFDocument({
-      size: this.labelInfo.pageSize,
-      margin: 0,
-      autoFirstPage: true,
+    // Create jsPDF document using the configured page format
+    this.doc = new jsPDF({
+      orientation: "portrait",
+      unit: "mm",
+      format: this.labelInfo.pageFormat.toLowerCase(),
     });
   }
 
@@ -66,32 +66,36 @@ export class PDFGenerator {
     let y: number;
 
     if (this.topDown) {
-      x = Math.floor(index / this.labelInfo.labelsY);
-      y = index % this.labelInfo.labelsY;
+      x = Math.floor(index / this.labelInfo.numLabels.y);
+      y = index % this.labelInfo.numLabels.y;
     } else {
-      x = index % this.labelInfo.labelsX;
-      y = Math.floor(index / this.labelInfo.labelsX);
+      x = index % this.labelInfo.numLabels.x;
+      y = Math.floor(index / this.labelInfo.numLabels.x);
     }
 
     return {
       x:
-        this.labelInfo.margin.left +
-        x * (this.labelInfo.labelSize.width + this.labelInfo.gutterSize.x),
+        this.labelInfo.marginInMm.left +
+        x *
+          (this.labelInfo.labelSizeInMm.width +
+            this.labelInfo.gutterSizeInMm.x),
       y:
-        this.labelInfo.margin.top +
-        y * (this.labelInfo.labelSize.height + this.labelInfo.gutterSize.y),
+        this.labelInfo.marginInMm.top +
+        y *
+          (this.labelInfo.labelSizeInMm.height +
+            this.labelInfo.gutterSizeInMm.y),
     };
   }
 
   private drawDebugBorder(pos: LabelPosition): void {
     if (this.border) {
       // Scale the dimensions independently
-      const width = this.labelInfo.labelSize.width * this.scale.x;
-      const height = this.labelInfo.labelSize.height * this.scale.y;
+      const width = this.labelInfo.labelSizeInMm.width * this.scale.x;
+      const height = this.labelInfo.labelSizeInMm.height * this.scale.y;
       const x = pos.x * this.scale.x + this.offset.x;
       const y = pos.y * this.scale.y + this.offset.y;
 
-      this.doc.rect(x, y, width, height).stroke();
+      this.doc.rect(x, y, width, height, "S");
     }
   }
 
@@ -113,15 +117,17 @@ export class PDFGenerator {
     const innerX = outerX + this.margin.x * this.scale.x;
     const innerY = outerY + this.margin.y * this.scale.y;
 
-    const outerHeight = this.labelInfo.labelSize.height * this.scale.y;
-    const outerWidth = this.labelInfo.labelSize.width * this.scale.x;
+    const outerHeight = this.labelInfo.labelSizeInMm.height * this.scale.y;
+    const outerWidth = this.labelInfo.labelSizeInMm.width * this.scale.x;
     const innerHeight = outerHeight - this.margin.y * 2 * this.scale.y;
     const innerWidth = outerWidth - this.margin.x * 2 * this.scale.x;
 
-    // Don't render if the label is outside the page
+    // Don't render if the label is outside the page (jsPDF page dimensions in mm)
+    const pageWidth = this.doc.internal.pageSize.getWidth();
+    const pageHeight = this.doc.internal.pageSize.getHeight();
     if (
-      outerX + outerWidth > this.doc.page.width ||
-      outerY + outerHeight > this.doc.page.height ||
+      outerX + outerWidth > pageWidth ||
+      outerY + outerHeight > pageHeight ||
       outerX < 0 ||
       outerY < 0
     ) {
@@ -136,40 +142,34 @@ export class PDFGenerator {
     const qrWidth = qrBaseSize * this.scale.x;
     const qrHeight = qrBaseSize * this.scale.y;
 
-    // Generate QR code buffer using the larger dimension
-    const qrBuffer = await generateQRCodeBuffer(
-      textQR,
-      Math.max(qrHeight, qrWidth),
-    );
+    // Generate QR code data URL at natural size
+    const qrDataURL = await generateQRCodeDataURL(textQR);
 
     // Draw QR code with independent x/y scaling
-    this.doc.image(qrBuffer, innerX, innerY, {
-      width: qrWidth,
-      height: qrHeight,
-    });
+    this.doc.addImage(qrDataURL, "PNG", innerX, innerY, qrWidth, qrHeight);
 
-    const gutter = 2 * MM_TO_POINTS * this.scale.x;
+    const gutter = 2 * this.scale.x; // 2mm gutter
     const maxTextWidth = innerWidth - qrWidth - gutter;
 
-    // Find out the font size based on available space
-    this.doc.fontSize(1);
-    // Small margin as not all characters are the same width
-    const fontSize = (maxTextWidth / this.doc.widthOfString(textPrint)) * 0.95;
-    this.doc.fontSize(fontSize);
+    // Calculate font size based on available space
+    // jsPDF text width estimation is different from PDFKit
+    const testFontSize = 10;
+    this.doc.setFontSize(testFontSize);
+    const testWidth = this.doc.getTextWidth(textPrint);
+    const fontSize = Math.max(
+      6,
+      (maxTextWidth / testWidth) * testFontSize * 0.95,
+    );
 
-    // Calculate available space for text
+    this.doc.setFontSize(fontSize);
+
+    // Calculate text position
     const centerY = innerY + innerHeight / 2;
     const textStartX = innerX + qrWidth + gutter;
-    const textStartY = centerY + fontSize * 0.38;
+    const textStartY = centerY + (fontSize * 0.38) / MM_TO_POINTS; // Convert to mm
 
-    // Font is always scaled in both axis, as this is not supported by PDFKit.
-    // Should be good enough for small scales though.
-
-    this.doc.font("Helvetica").text(textPrint, textStartX, textStartY, {
-      width: maxTextWidth,
-      align: "left",
-      baseline: "alphabetic",
-    });
+    // Draw text
+    this.doc.text(textPrint, textStartX, textStartY);
 
     this.currentAsn += 1;
   }
@@ -180,17 +180,16 @@ export class PDFGenerator {
 
     await mkdir(outDir, { recursive: true });
 
-    return new Promise((resolve, reject) => {
-      const writeStream = createWriteStream(fullPath);
-      writeStream.on("finish", resolve);
-      writeStream.on("error", reject);
-      this.doc.pipe(writeStream);
-      this.doc.end();
-    });
+    // Generate PDF buffer
+    const pdfBuffer = Buffer.from(this.doc.output("arraybuffer"));
+
+    // Write to file
+    await writeFile(fullPath, pdfBuffer);
   }
 
   public async renderLabels(count: number): Promise<void> {
-    const labelsPerPage = this.labelInfo.labelsX * this.labelInfo.labelsY;
+    const labelsPerPage =
+      this.labelInfo.numLabels.x * this.labelInfo.numLabels.y;
     const totalPages = Math.ceil(count / labelsPerPage);
 
     // Add empty pages upfront based on skip count

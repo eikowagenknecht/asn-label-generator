@@ -13,23 +13,22 @@ export interface ScaleFactor {
   y: number;
 }
 
-interface Dimensions {
+interface DimensionsInMm {
   width: number;
   height: number;
 }
 
-interface PageMargins {
+interface PageMarginsInMm {
   top: number;
   left: number;
 }
 
 export interface LabelInfo {
-  labelsX: number;
-  labelsY: number;
-  labelSize: Dimensions;
-  gutterSize: Spacing;
-  margin: PageMargins;
-  pageSize: string;
+  numLabels: Spacing;
+  labelSizeInMm: DimensionsInMm;
+  gutterSizeInMm: Spacing;
+  marginInMm: PageMarginsInMm;
+  pageFormat: string;
 }
 
 export interface LabelPosition {
