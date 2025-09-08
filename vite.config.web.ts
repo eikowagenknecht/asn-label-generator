@@ -2,7 +2,6 @@ import path from "node:path";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
-import { viteSingleFile } from "vite-plugin-singlefile";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -16,7 +15,6 @@ export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
-    viteSingleFile(),
   ],
 
   build: {
@@ -26,7 +24,7 @@ export default defineConfig({
     // Output directory
     outDir: "dist-web",
     
-    // Optimize rollup for single file
+    // Optimize rollup options
     rollupOptions: {
       external: [
         // Don't bundle these - we don't use them
@@ -34,6 +32,17 @@ export default defineConfig({
         'canvg',
         'dompurify',
       ],
+      output: {
+        // Use consistent naming for assets
+        entryFileNames: 'asn-label-generator.js',
+        chunkFileNames: 'asn-label-generator-[name].js',
+        assetFileNames: (assetInfo) => {
+          if (assetInfo.names?.[0]?.endsWith('.css')) {
+            return 'asn-label-generator.css';
+          }
+          return 'assets/[name].[ext]';
+        },
+      },
     },
   },
 
