@@ -182,13 +182,8 @@ export abstract class PDFGeneratorBase {
       this.labelInfo.numLabels.x * this.labelInfo.numLabels.y;
     const totalPages = Math.ceil(count / labelsPerPage);
 
-    // Add empty pages upfront based on skip count
-    const startingPage = Math.floor(this.skip / labelsPerPage);
-    for (let i = 0; i < startingPage; i++) {
-      this.doc.addPage();
-    }
-
-    // We'll render labels from index 'skip' up to 'totalLabels'
+    // We'll render labels from index 'skip' up to 'count'
+    let currentPage = 0;
     for (let labelIndex = this.skip; labelIndex < count; labelIndex++) {
       // Report progress
       if (onProgress) {
@@ -197,12 +192,15 @@ export abstract class PDFGeneratorBase {
         onProgress(Math.min(progress, 100));
       }
 
-      // First, determine which page this label belongs on
+      // Determine which page this label belongs on
       const pageNumber = Math.floor(labelIndex / labelsPerPage);
 
-      // Add a new page when needed
-      if (pageNumber > 0 && labelIndex % labelsPerPage === 0) {
-        this.doc.addPage();
+      // Add pages as needed
+      while (currentPage <= pageNumber) {
+        if (currentPage > 0) {
+          this.doc.addPage();
+        }
+        currentPage++;
       }
 
       // Calculate the position within the current page
