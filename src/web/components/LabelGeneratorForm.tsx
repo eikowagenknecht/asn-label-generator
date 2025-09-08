@@ -73,7 +73,7 @@ export function LabelGeneratorForm() {
         startAsn: data.startAsn,
         digits: data.digits,
         prefixQR: data.prefixQR,
-        prefixPrint: data.prefixPrint || data.prefixQR,
+        prefixPrint: data.prefixPrint ?? data.prefixQR,
         offset: { x: data.offsetX, y: data.offsetY },
         scale: { x: data.scaleX, y: data.scaleY },
         margin: { x: data.marginX, y: data.marginY },
@@ -189,7 +189,13 @@ export function LabelGeneratorForm() {
                       />
                     </FormControl>
                     <FormDescription>
-                      The first ASN number to generate (preview: {form.watch("prefixQR") || "ASN"}{form.watch("startAsn")?.toString().padStart(form.watch("digits") || 6, "0") || "000001"})
+                      The first ASN number to generate (preview:{" "}
+                      {form.watch("prefixQR") || "ASN"}
+                      {form
+                        .watch("startAsn")
+                        .toString()
+                        .padStart(form.watch("digits") || 6, "0")}
+                      )
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -215,7 +221,8 @@ export function LabelGeneratorForm() {
                       />
                     </FormControl>
                     <FormDescription>
-                      Zero-padded digits in ASN numbers (6 = ASN000001, typically 4-8)
+                      Zero-padded digits in ASN numbers (6 = ASN000001,
+                      typically 4-8)
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -269,7 +276,8 @@ export function LabelGeneratorForm() {
                             />
                           </FormControl>
                           <FormDescription>
-                            Leave first N positions blank (useful when some labels already printed on sheet)
+                            Leave first N positions blank (useful when some
+                            labels already printed on sheet)
                           </FormDescription>
                           <FormMessage />
                         </FormItem>
@@ -398,7 +406,6 @@ export function LabelGeneratorForm() {
                       )}
                     />
                   </div>
-
                 </CollapsibleContent>
               </Collapsible>
 
@@ -575,17 +582,23 @@ export function LabelGeneratorForm() {
               {/* Generation Summary */}
               <Card>
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-base">Generation Summary</CardTitle>
+                  <CardTitle className="text-base">
+                    Generation Summary
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground">Total Labels:</span>
+                      <span className="text-sm text-muted-foreground">
+                        Total Labels:
+                      </span>
                       <span className="text-lg font-semibold">
                         {(() => {
-                          const numLabels = form.watch("numLabels") as number | undefined;
-                          const pages = form.watch("pages") as number;
-                          return numLabels || (pages * 189);
+                          const numLabels = form.watch("numLabels") as
+                            | number
+                            | undefined;
+                          const pages = form.watch("pages");
+                          return numLabels ?? pages * 189;
                         })()}
                       </span>
                     </div>
@@ -593,14 +606,16 @@ export function LabelGeneratorForm() {
                       <span className="text-muted-foreground">Range:</span>
                       <span className="font-mono">
                         {(() => {
-                          const prefixQR = (form.watch("prefixQR") as string) || "ASN";
-                          const startAsn = (form.watch("startAsn") as number) || 1;
-                          const digits = (form.watch("digits") as number) || 6;
-                          const numLabels = form.watch("numLabels") as number | undefined;
-                          const pages = (form.watch("pages") as number) || 1;
-                          const totalLabels = numLabels || (pages * 189);
+                          const prefixQR = form.watch("prefixQR") || "ASN";
+                          const startAsn = form.watch("startAsn") || 1;
+                          const digits = form.watch("digits") || 6;
+                          const numLabels = form.watch("numLabels") as
+                            | number
+                            | undefined;
+                          const pages = form.watch("pages") || 1;
+                          const totalLabels = numLabels ?? pages * 189;
                           const endAsn = startAsn + totalLabels - 1;
-                          
+
                           return `${prefixQR}${startAsn.toString().padStart(digits, "0")} → ${prefixQR}${endAsn.toString().padStart(digits, "0")}`;
                         })()}
                       </span>
