@@ -22,7 +22,6 @@ export const webFormSchema = z.object({
   skip: z.number().int().nonnegative(),
   prefixQR: z.string(),
   prefixPrint: z.string().optional(),
-  customPrintPrefix: z.boolean().default(false),
   offsetX: z.number(), // Float, can be negative
   offsetY: z.number(), // Float, can be negative
   scaleX: z.preprocess((val) => {

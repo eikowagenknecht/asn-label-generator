@@ -20,21 +20,20 @@ export default defineConfig({
   ],
 
   build: {
-    // Generate source maps for better debugging
-    sourcemap: true,
+    // Disable source maps for smaller output
+    sourcemap: false,
     
-    // Output as single HTML file
+    // Output directory
     outDir: "dist-web",
     
-    // Inline all assets
-    assetsInlineLimit: 100000000, // 100MB - ensure everything is inlined
-    
+    // Optimize rollup for single file
     rollupOptions: {
-      input: "index.html",
-      output: {
-        // Single file output
-        inlineDynamicImports: true,
-      },
+      external: [
+        // Don't bundle these - we don't use them
+        'html2canvas',
+        'canvg',
+        'dompurify',
+      ],
     },
   },
 

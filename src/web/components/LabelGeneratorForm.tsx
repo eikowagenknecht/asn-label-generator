@@ -44,7 +44,6 @@ export function LabelGeneratorForm() {
       skip: 0,
       prefixQR: "ASN",
       prefixPrint: undefined,
-      customPrintPrefix: false,
       offsetX: 0,
       offsetY: 0,
       scaleX: 100, // Store as percentage in form
@@ -74,9 +73,7 @@ export function LabelGeneratorForm() {
         startAsn: data.startAsn,
         digits: data.digits,
         prefixQR: data.prefixQR,
-        prefixPrint: data.customPrintPrefix
-          ? (data.prefixPrint ?? data.prefixQR)
-          : data.prefixQR,
+        prefixPrint: data.prefixPrint || data.prefixQR,
         offset: { x: data.offsetX, y: data.offsetY },
         scale: { x: data.scaleX, y: data.scaleY },
         margin: { x: data.marginX, y: data.marginY },
@@ -108,9 +105,25 @@ export function LabelGeneratorForm() {
     <div className="space-y-6">
       <div className="bg-muted/30 p-4 rounded-lg mb-6">
         <p className="text-sm text-muted-foreground mb-3">
-          Generate PDF sheets of labels with ASN numbers and QR codes for
-          paperless-ngx. When you scan a document with these labels,
-          paperless-ngx automatically assigns unique identifiers.
+          Generate PDF sheets of labels with ASN numbers and QR codes for{" "}
+          <a
+            href="https://docs.paperless-ngx.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary hover:underline"
+          >
+            paperless-ngx
+          </a>
+          . When you scan a document with these labels,{" "}
+          <a
+            href="https://docs.paperless-ngx.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary hover:underline"
+          >
+            paperless-ngx
+          </a>{" "}
+          automatically assigns unique identifiers.
         </p>
         <div className="flex flex-wrap gap-2">
           <Badge>Format: Avery L4731 (189 labels/page)</Badge>
@@ -141,6 +154,8 @@ export function LabelGeneratorForm() {
                     <FormControl>
                       <Input
                         type="number"
+                        min="1"
+                        max="50"
                         {...field}
                         onChange={(e) => {
                           field.onChange(+e.target.value);
@@ -155,7 +170,33 @@ export function LabelGeneratorForm() {
                 )}
               />
 
-              {/* 2. Number of Digits */}
+              {/* 2. Starting ASN Number */}
+              <FormField
+                control={form.control}
+                name="startAsn"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Starting ASN Number</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        min="1"
+                        max="999999"
+                        {...field}
+                        onChange={(e) => {
+                          field.onChange(+e.target.value);
+                        }}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      The first ASN number to generate (preview: {form.watch("prefixQR") || "ASN"}{form.watch("startAsn")?.toString().padStart(form.watch("digits") || 6, "0") || "000001"})
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* 3. Number of Digits */}
               <FormField
                 control={form.control}
                 name="digits"
@@ -165,6 +206,8 @@ export function LabelGeneratorForm() {
                     <FormControl>
                       <Input
                         type="number"
+                        min="1"
+                        max="10"
                         {...field}
                         onChange={(e) => {
                           field.onChange(+e.target.value);
@@ -172,14 +215,14 @@ export function LabelGeneratorForm() {
                       />
                     </FormControl>
                     <FormDescription>
-                      Zero-padded digits in ASN numbers (6 = ASN000001)
+                      Zero-padded digits in ASN numbers (6 = ASN000001, typically 4-8)
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
-              {/* 3. Ordering */}
+              {/* 4. Ordering */}
               <FormField
                 control={form.control}
                 name="topDown"
@@ -198,49 +241,6 @@ export function LabelGeneratorForm() {
                         Order labels by column instead of row
                       </FormDescription>
                     </div>
-                  </FormItem>
-                )}
-              />
-
-              {/* 4. Label Prefix */}
-              <FormField
-                control={form.control}
-                name="prefixQR"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Label Prefix</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      Prefix for both QR code and printed label (e.g., ASN, P,
-                      B)
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* 5. Starting ASN Number */}
-              <FormField
-                control={form.control}
-                name="startAsn"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Starting ASN Number</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        {...field}
-                        onChange={(e) => {
-                          field.onChange(+e.target.value);
-                        }}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      The first ASN number to generate (e.g., 1 for ASN000001)
-                    </FormDescription>
-                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -269,7 +269,7 @@ export function LabelGeneratorForm() {
                             />
                           </FormControl>
                           <FormDescription>
-                            Skip first N labels (useful for finishing partially printed sheets)
+                            Leave first N positions blank (useful when some labels already printed on sheet)
                           </FormDescription>
                           <FormMessage />
                         </FormItem>
@@ -285,7 +285,7 @@ export function LabelGeneratorForm() {
                           <FormControl>
                             <Input
                               type="number"
-                              placeholder="Leave empty to use pages"
+                              placeholder="Leave empty to automatically fill whole pages using 'Number of Pages'"
                               {...field}
                               onChange={(e) => {
                                 field.onChange(
@@ -300,6 +300,47 @@ export function LabelGeneratorForm() {
                           <FormDescription>
                             Generate exact number of labels instead of full
                             pages
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  {/* Prefix Settings */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="prefixQR"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>QR Code Prefix</FormLabel>
+                          <FormControl>
+                            <Input maxLength={10} {...field} />
+                          </FormControl>
+                          <FormDescription>
+                            Embedded in QR code data (usually "ASN")
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="prefixPrint"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Printed Prefix</FormLabel>
+                          <FormControl>
+                            <Input
+                              maxLength={10}
+                              {...field}
+                              placeholder={form.watch("prefixQR") || "ASN"}
+                            />
+                          </FormControl>
+                          <FormDescription>
+                            Shown on label (blank = use QR prefix)
                           </FormDescription>
                           <FormMessage />
                         </FormItem>
@@ -358,53 +399,6 @@ export function LabelGeneratorForm() {
                     />
                   </div>
 
-                  {/* Custom Print Prefix */}
-                  <FormField
-                    control={form.control}
-                    name="customPrintPrefix"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-row items-start space-x-2 space-y-0">
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value ?? false}
-                            onCheckedChange={field.onChange}
-                            className="mt-1"
-                          />
-                        </FormControl>
-                        <div className="space-y-1">
-                          <FormLabel>
-                            Use different prefix for printed labels
-                          </FormLabel>
-                          <FormDescription>
-                            Show different text on label than in QR code
-                          </FormDescription>
-                        </div>
-                      </FormItem>
-                    )}
-                  />
-
-                  {form.watch("customPrintPrefix") && (
-                    <FormField
-                      control={form.control}
-                      name="prefixPrint"
-                      render={({ field }) => (
-                        <FormItem className="ml-6">
-                          <FormLabel>Printed Label Prefix</FormLabel>
-                          <FormControl>
-                            <Input
-                              {...field}
-                              placeholder={form.watch("prefixQR") || "ASN"}
-                            />
-                          </FormControl>
-                          <FormDescription>
-                            Different prefix shown on label (QR code will still
-                            use "{form.watch("prefixQR") || "ASN"}")
-                          </FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  )}
                 </CollapsibleContent>
               </Collapsible>
 
@@ -578,6 +572,43 @@ export function LabelGeneratorForm() {
                 </div>
               )}
 
+              {/* Generation Summary */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base">Generation Summary</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-muted-foreground">Total Labels:</span>
+                      <span className="text-lg font-semibold">
+                        {(() => {
+                          const numLabels = form.watch("numLabels") as number | undefined;
+                          const pages = form.watch("pages") as number;
+                          return numLabels || (pages * 189);
+                        })()}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">Range:</span>
+                      <span className="font-mono">
+                        {(() => {
+                          const prefixQR = (form.watch("prefixQR") as string) || "ASN";
+                          const startAsn = (form.watch("startAsn") as number) || 1;
+                          const digits = (form.watch("digits") as number) || 6;
+                          const numLabels = form.watch("numLabels") as number | undefined;
+                          const pages = (form.watch("pages") as number) || 1;
+                          const totalLabels = numLabels || (pages * 189);
+                          const endAsn = startAsn + totalLabels - 1;
+                          
+                          return `${prefixQR}${startAsn.toString().padStart(digits, "0")} → ${prefixQR}${endAsn.toString().padStart(digits, "0")}`;
+                        })()}
+                      </span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
               {/* Submit Button */}
               <div className="border-t pt-6">
                 <Button
@@ -606,7 +637,15 @@ export function LabelGeneratorForm() {
       {/* Footer */}
       <div className="text-center text-xs text-muted-foreground">
         <p>
-          Compatible with Avery L4731 label sheets • Works with paperless-ngx
+          Compatible with Avery L4731 label sheets • Works with{" "}
+          <a
+            href="https://docs.paperless-ngx.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary hover:underline"
+          >
+            paperless-ngx
+          </a>{" "}
           document management
         </p>
       </div>
