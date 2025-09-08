@@ -114,10 +114,8 @@ pnpm knip
 
 - **Vite** for building and development
 - **ESM-only** project (`type: "module"`)
-- **External dependencies** are not bundled for CLI, bundled for web
 - **CLI builds** to `dist/main.js` as a single ES module
 - **Web builds** to `dist-web/` as a single HTML file with embedded assets
-- **Executable shebang** for direct CLI usage
 
 ### Label Generation Flow
 
@@ -130,13 +128,17 @@ pnpm knip
 ## Technology Stack
 
 ### Core Dependencies
-- **React 19**: Web interface framework
 - **jsPDF**: PDF generation in browser
 - **QRCode**: QR code generation
 - **Zod**: Runtime validation and type safety
-- **Commander.js**: CLI argument parsing
-- **Tailwind CSS**: Utility-first CSS framework
 - **Vite**: Build tool and dev server
+
+#### Web only
+- **React 19**: Web interface framework
+- **Tailwind CSS**: Utility-first CSS framework
+
+#### CLI only
+- **Commander.js**: CLI argument parsing
 
 ### Development Tools
 - **TypeScript**: Static type checking
@@ -145,70 +147,3 @@ pnpm knip
 - **Biome**: Fast linter and formatter
 - **Vitest**: Testing framework
 - **Lefthook**: Git hooks management
-
-## Code Style Guidelines
-
-- **TypeScript strict mode** enabled
-- **ESM imports/exports** only
-- **Functional components** for React
-- **Zod schemas** for all data validation
-- **Consistent naming**: camelCase for variables/functions, PascalCase for components
-- **No default exports** (prefer named exports)
-
-## Testing Strategy
-
-- **Unit tests** with Vitest
-- **V8 coverage** reporting
-- **Validation testing** for Zod schemas
-- **PDF generation testing** for core functionality
-
-## Git Workflow
-
-- **Conventional commits** enforced via commitlint
-- **Pre-commit hooks** via Lefthook for linting and formatting
-- **Feature branches** for new development
-- **Pull requests** required for main branch
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Make your changes
-4. Run tests and linting (`pnpm check && pnpm test`)
-5. Commit your changes (`git commit -m 'feat: add amazing feature'`)
-6. Push to the branch (`git push origin feature/amazing-feature`)
-7. Open a Pull Request
-
-### Commit Message Format
-
-Follow [Conventional Commits](https://www.conventionalcommits.org/):
-
-```
-type(scope): description
-
-[optional body]
-
-[optional footer]
-```
-
-Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
-
-## Release Process
-
-1. Update version in `package.json`
-2. Update CHANGELOG.md
-3. Create release commit
-4. Tag with version number
-5. Push to trigger CI/CD
-6. Publish to npm (CLI)
-7. Deploy web version to hosting
-
-## Troubleshooting
-
-### Common Issues
-
-- **Node version mismatch**: Ensure Node.js >= 22.0.0
-- **pnpm not found**: Install with `npm install -g pnpm`
-- **Build failures**: Clear node_modules and reinstall (`pnpm clean:npm && pnpm install`)
-- **Test failures**: Ensure all dependencies are installed
-- **Linting errors**: Run `pnpm lint` to auto-fix most issues

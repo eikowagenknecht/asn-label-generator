@@ -3,7 +3,7 @@
 A **web-based tool** for generating PDF sheets of labels with ASN (Archive Serial Number) numbers and corresponding QR codes, designed to work with the paperless-ngx document management system.
 This tool helps you create labels that can be attached to physical documents before scanning, allowing paperless-ngx to automatically assign unique identifiers to your scanned documents.
 
-**🌐 Try it now at [eikowagenknecht.com/asn-label-generator/](https://eikowagenknecht.com/asn-label-generator/)** - No installation required, works directly in your browser!
+Web version available at [eikowagenknecht.com/asn-label-generator/](https://eikowagenknecht.com/asn-label-generator/)
 
 ## What it's used for
 
@@ -17,42 +17,34 @@ This creates a reliable link between your physical and digital documents, making
 
 The generated labels include both human-readable ASN numbers and QR codes.
 
-## 🌐 Web Application
+## Web Application
 
-The easiest way to use this tool is through the web interface - no installation required!
+### Features
 
-### Live Application
-**[Use the web version at eikowagenknecht.com/asn-label-generator](https://eikowagenknecht.com/asn-label-generator/)**
+- Generate exact number of labels or full pages (189 labels per A4 sheet)
+- Configure starting number, digit length, and prefixes  
+- Resume printing on partially used sheets
+- X/Y offsets, scaling, and debug borders for printer alignment
+- Adjust margins between QR codes and text
+- Processing happens in your browser
 
-### Key Features
-
-- **Flexible quantity control** - Generate exact number of labels or full pages (189 labels per A4 sheet)
-- **Customizable ASN numbering** - Configure starting number, digit length, and prefixes
-- **Skip labels** - Resume printing on partially used sheets
-- **Printer alignment tools** - X/Y offsets, scaling, and debug borders for precise alignment
-- **Content spacing control** - Adjust margins between QR codes and text
-- **Real-time preview** - Live summary showing label count and ASN range
-- **Progress tracking** - Visual indicator during PDF generation
-- **Privacy-friendly** - All processing happens in your browser, no data sent to servers
-- **Mobile-friendly** - Responsive interface for any device
-
-### Quick Start
+### Usage
 1. Visit [eikowagenknecht.com/asn-label-generator/](https://eikowagenknecht.com/asn-label-generator/)
-2. Configure your labels using the intuitive form
-3. Click "Generate Labels" to download your PDF
-4. Print on Avery L4731 compatible label sheets
+2. Configure your labels
+3. Generate and download PDF
+4. Print on [Avery L4731](https://amzn.to/46t3MdG) compatible label sheets
 
 ## Alternative: Command Line Interface
 
 While the web application is the easiest way to use this tool, a CLI version is also available for power users and automation scenarios.
 
-📋 **[View CLI Documentation →](README.cli.md)**
+[View CLI Documentation →](README.cli.md)
 
-The CLI provides all the same features as the web version, plus additional options for automation and scripting.
+The CLI provides all the same features as the web version.
 
 ## Label Format Support
 
-Currently supports Avery L4731 labels with the following specifications:
+Currently supports [Avery L4731](https://amzn.to/46t3MdG) labels with the following specifications:
 
 - 7 columns × 27 rows on A4 paper
 - Label size: 25.4mm × 10mm
@@ -65,17 +57,12 @@ These labels are chosen for their optimal size for document management - large e
 
 ## Development & Contributing
 
-Interested in contributing? Check out the comprehensive development guide:
+Interested in contributing? Check out the used libraries and commands in the development guide:
 
-🔧 **[Development Documentation →](README.development.md)**
+[Development Documentation →](README.development.md)
 
-The development guide covers:
-- Project setup and architecture
-- Development commands and workflows  
-- Code quality standards and testing
-- Contributing guidelines and git workflow
-
-Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
+Contributions are welcome! Please feel free to submit a Pull Request.
+For major changes, please open an issue first to discuss what you would like to change.
 
 ## License
 
@@ -85,15 +72,15 @@ This project is licensed under the terms of the MIT license.
 
 Built with:
 
-- [React](https://react.dev/) for the web interface
+- [Vite](https://vite.dev/) for build tooling
 - [jsPDF](https://github.com/parallax/jsPDF) for PDF generation
 - [QRCode](https://github.com/soldair/node-qrcode) for QR code generation
 - [Zod](https://github.com/colinhacks/zod) for runtime validation
+- [React](https://react.dev/) for the web interface
 - [Tailwind CSS](https://tailwindcss.com/) for styling
-- [Vite](https://vite.dev/) for build tooling
 - [Commander.js](https://github.com/tj/commander.js) for CLI parsing (CLI version)
 
-Special thanks to the paperless-ngx community for inspiration and feedback.
+## Alternatives
 
 If this project is not exactly what you're looking for, you might also be interested in the alternatives:
 

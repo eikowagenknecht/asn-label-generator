@@ -652,7 +652,8 @@ export function LabelGeneratorForm() {
       {/* Footer */}
       <div className="text-center text-xs text-muted-foreground">
         <p>
-          Compatible with Avery L4731 label sheets • Works with{" "}
+          Compatible with <a href="https://amzn.to/46t3MdG">Avery L4731</a>{" "}
+          label sheets • Works with{" "}
           <a
             href="https://docs.paperless-ngx.com/"
             target="_blank"

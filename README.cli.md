@@ -2,7 +2,7 @@
 
 Command-line interface for generating PDF sheets of labels with ASN (Archive Serial Number) numbers and corresponding QR codes for the paperless-ngx document management system.
 
-> **💡 Looking for the easy-to-use web version?** Check out [eikowagenknecht.com/asn-label-generator](https://eikowagenknecht.com/asn-label-generator/) - no installation required!
+Web version available at [eikowagenknecht.com/asn-label-generator](https://eikowagenknecht.com/asn-label-generator/)
 
 ## Prerequisites
 
@@ -69,104 +69,44 @@ pnpm dev
 node dist/main.js
 ```
 
-Generate labels for a specific batch of documents:
+### Examples
 
+Generate 50 labels:
 ```bash
-# If globally installed
 asn-label-generator --num-labels 50
-
-# If using development mode
-pnpm dev -- --num-labels 50
-
-# If using built version
-node dist/main.js --num-labels 50
 ```
 
-### Common Examples
-
-Generate labels for a large batch of documents:
-
+Generate 3 pages starting from ASN 1000:
 ```bash
-# If globally installed
 asn-label-generator --pages 3 --start-asn 1000
-
-# If using development mode
-pnpm dev -- --pages 3 --start-asn 1000
-
-# If using built version
-node dist/main.js --pages 3 --start-asn 1000
 ```
 
-Use custom prefixes for different document types so you can easily distinguish the labels:
-
+Use custom prefixes:
 ```bash
-# If globally installed
-asn-label-generator --prefixPrint "P" --digits 6  # For private documents
-asn-label-generator --prefixPrint "B" --digits 6  # For business documents
-
-# If using development mode
-pnpm dev -- --prefixPrint "P" --digits 6  # For private documents
-pnpm dev -- --prefixPrint "B" --digits 6  # For business documents
-
-# If using built version
-node dist/main.js --prefixPrint "P" --digits 6  # For private documents
-node dist/main.js --prefixPrint "B" --digits 6  # For business documents
+asn-label-generator --prefixPrint "P" --digits 6  # Private documents
+asn-label-generator --prefixPrint "B" --digits 6  # Business documents
 ```
 
-The QR code itself will still contain `ASN` followed by the number, you can set this indivuidally with the `--prefixQR` option.
-
-Continue from a partially used sheet:
-
+Continue from partially used sheet:
 ```bash
-# If globally installed
 asn-label-generator --skip 10
-
-# If using development mode
-pnpm dev -- --skip 10
-
-# If using built version
-node dist/main.js --skip 10
 ```
 
 ### Advanced Options
 
-Test label alignment with visible borders:
-
+Test label alignment:
 ```bash
-# If globally installed
 asn-label-generator --border
-
-# If using development mode
-pnpm dev -- --border
-
-# If using built version
-node dist/main.js --border
 ```
 
-Adjust label positioning for your printer (offset values in millimeters):
-
+Adjust positioning (values in millimeters):
 ```bash
-# If globally installed
 asn-label-generator --offset-x 0.5 --offset-y -0.2 --scale-x 0.98
-
-# If using development mode
-pnpm dev -- --offset-x 0.5 --offset-y -0.2 --scale-x 0.98
-
-# If using built version
-node dist/main.js --offset-x 0.5 --offset-y -0.2 --scale-x 0.98
 ```
 
-As an example, my Brother HL-L2350DW printer requires the following adjustments to manage to print the label content in the middle of each label:
-
+Brother HL-L2350DW printer settings:
 ```bash
-# If globally installed
 asn-label-generator --offset-x 0 --offset-y -0.5 --scale-x 1.0 --scale-y 0.994475
-
-# If using development mode
-pnpm dev -- --offset-x 0 --offset-y -0.5 --scale-x 1.0 --scale-y 0.994475
-
-# If using built version
-node dist/main.js --offset-x 0 --offset-y -0.5 --scale-x 1.0 --scale-y 0.994475
 ```
 
 ### All Available Options
