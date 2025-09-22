@@ -1,6 +1,3 @@
-// Common
-
-// Typescript
 import eslint from "@eslint/js";
 import { defineConfig } from "eslint/config";
 import globals from "globals";
