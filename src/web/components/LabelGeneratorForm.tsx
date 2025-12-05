@@ -237,7 +237,7 @@ export function LabelGeneratorForm() {
                   <FormItem className="flex flex-row items-start space-x-2 space-y-0">
                     <FormControl>
                       <Checkbox
-                        checked={field.value}
+                        checked={field.value === true}
                         onCheckedChange={field.onChange}
                         className="mt-1"
                       />
@@ -429,7 +429,7 @@ export function LabelGeneratorForm() {
                       <FormItem className="flex flex-row items-start space-x-2 space-y-0">
                         <FormControl>
                           <Checkbox
-                            checked={field.value}
+                            checked={field.value === true}
                             onCheckedChange={field.onChange}
                             className="mt-1"
                           />
