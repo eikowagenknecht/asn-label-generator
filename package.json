@@ -56,7 +56,7 @@
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
     "commander": "14.0.2",
-    "jspdf": "3.0.4",
+    "jspdf": "4.0.0",
     "lucide-react": "0.562.0",
     "qrcode": "1.5.4",
     "react": "19.2.3",
