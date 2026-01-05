@@ -79,7 +79,7 @@
     "@vitejs/plugin-react": "5.1.2",
     "@vitest/coverage-v8": "4.0.16",
     "eslint": "9.39.2",
-    "globals": "16.5.0",
+    "globals": "17.0.0",
     "knip": "5.78.0",
     "lefthook": "2.0.13",
     "prettier": "3.7.4",
