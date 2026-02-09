@@ -2,19 +2,19 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { labelInfo } from "../../config/avery-labels";
-import type { LabelGeneratorOptions } from "../../types/label-info";
-import { BrowserPDFGenerator } from "../BrowserPDFGenerator";
-import { type WebFormData, webFormSchema } from "../validation";
+
+import type { LabelGeneratorOptions } from "@/types/label-info";
+import type { WebFormData } from "@/web/validation";
+
+import { labelInfo } from "@/config/avery-labels";
+import { BrowserPDFGenerator } from "@/web/BrowserPDFGenerator";
+import { webFormSchema } from "@/web/validation";
+
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Checkbox } from "./ui/checkbox";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "./ui/collapsible";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible";
 import {
   Form,
   FormControl,
@@ -158,13 +158,11 @@ export function LabelGeneratorForm() {
                         max="50"
                         {...field}
                         onChange={(e) => {
-                          field.onChange(+e.target.value);
+                          field.onChange(Number(e.target.value));
                         }}
                       />
                     </FormControl>
-                    <FormDescription>
-                      Pages to generate (189 labels per A4 page)
-                    </FormDescription>
+                    <FormDescription>Pages to generate (189 labels per A4 page)</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -184,13 +182,12 @@ export function LabelGeneratorForm() {
                         max="999999"
                         {...field}
                         onChange={(e) => {
-                          field.onChange(+e.target.value);
+                          field.onChange(Number(e.target.value));
                         }}
                       />
                     </FormControl>
                     <FormDescription>
-                      The first ASN number to generate (preview:{" "}
-                      {form.watch("prefixQR") || "ASN"}
+                      The first ASN number to generate (preview: {form.watch("prefixQR") || "ASN"}
                       {form
                         .watch("startAsn")
                         .toString()
@@ -216,13 +213,12 @@ export function LabelGeneratorForm() {
                         max="10"
                         {...field}
                         onChange={(e) => {
-                          field.onChange(+e.target.value);
+                          field.onChange(Number(e.target.value));
                         }}
                       />
                     </FormControl>
                     <FormDescription>
-                      Zero-padded digits in ASN numbers (6 = ASN000001,
-                      typically 4-8)
+                      Zero-padded digits in ASN numbers (6 = ASN000001, typically 4-8)
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -244,9 +240,7 @@ export function LabelGeneratorForm() {
                     </FormControl>
                     <div className="space-y-1">
                       <FormLabel>Top-down ordering</FormLabel>
-                      <FormDescription>
-                        Order labels by column instead of row
-                      </FormDescription>
+                      <FormDescription>Order labels by column instead of row</FormDescription>
                     </div>
                   </FormItem>
                 )}
@@ -271,13 +265,13 @@ export function LabelGeneratorForm() {
                               type="number"
                               {...field}
                               onChange={(e) => {
-                                field.onChange(+e.target.value);
+                                field.onChange(Number(e.target.value));
                               }}
                             />
                           </FormControl>
                           <FormDescription>
-                            Leave first N positions blank (useful when some
-                            labels already printed on sheet)
+                            Leave first N positions blank (useful when some labels already printed
+                            on sheet)
                           </FormDescription>
                           <FormMessage />
                         </FormItem>
@@ -297,17 +291,14 @@ export function LabelGeneratorForm() {
                               {...field}
                               onChange={(e) => {
                                 field.onChange(
-                                  e.target.value === ""
-                                    ? undefined
-                                    : +e.target.value,
+                                  e.target.value === "" ? undefined : Number(e.target.value),
                                 );
                               }}
                               value={field.value?.toString() ?? ""}
                             />
                           </FormControl>
                           <FormDescription>
-                            Generate exact number of labels instead of full
-                            pages
+                            Generate exact number of labels instead of full pages
                           </FormDescription>
                           <FormMessage />
                         </FormItem>
@@ -347,9 +338,7 @@ export function LabelGeneratorForm() {
                               placeholder={form.watch("prefixQR") || "ASN"}
                             />
                           </FormControl>
-                          <FormDescription>
-                            Shown on label (blank = use QR prefix)
-                          </FormDescription>
+                          <FormDescription>Shown on label (blank = use QR prefix)</FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -370,7 +359,7 @@ export function LabelGeneratorForm() {
                               step="0.1"
                               {...field}
                               onChange={(e) => {
-                                field.onChange(+e.target.value);
+                                field.onChange(Number(e.target.value));
                               }}
                             />
                           </FormControl>
@@ -394,7 +383,7 @@ export function LabelGeneratorForm() {
                               step="0.1"
                               {...field}
                               onChange={(e) => {
-                                field.onChange(+e.target.value);
+                                field.onChange(Number(e.target.value));
                               }}
                             />
                           </FormControl>
@@ -417,8 +406,7 @@ export function LabelGeneratorForm() {
                 </CollapsibleTrigger>
                 <CollapsibleContent className="space-y-4 pt-4">
                   <p className="text-sm text-muted-foreground mb-4">
-                    Adjust these values if labels don't align properly with your
-                    printer.
+                    Adjust these values if labels don't align properly with your printer.
                   </p>
 
                   {/* Show borders checkbox */}
@@ -457,13 +445,11 @@ export function LabelGeneratorForm() {
                               step="0.1"
                               {...field}
                               onChange={(e) => {
-                                field.onChange(+e.target.value);
+                                field.onChange(Number(e.target.value));
                               }}
                             />
                           </FormControl>
-                          <FormDescription>
-                            Move all labels left/right on page
-                          </FormDescription>
+                          <FormDescription>Move all labels left/right on page</FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -481,13 +467,11 @@ export function LabelGeneratorForm() {
                               step="0.1"
                               {...field}
                               onChange={(e) => {
-                                field.onChange(+e.target.value);
+                                field.onChange(Number(e.target.value));
                               }}
                             />
                           </FormControl>
-                          <FormDescription>
-                            Move all labels up/down on page
-                          </FormDescription>
+                          <FormDescription>Move all labels up/down on page</FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -509,7 +493,7 @@ export function LabelGeneratorForm() {
                                 {...field}
                                 value={field.value?.toString() ?? ""}
                                 onChange={(e) => {
-                                  field.onChange(+e.target.value);
+                                  field.onChange(Number(e.target.value));
                                 }}
                               />
                             </div>
@@ -538,7 +522,7 @@ export function LabelGeneratorForm() {
                                 {...field}
                                 value={field.value?.toString() ?? ""}
                                 onChange={(e) => {
-                                  field.onChange(+e.target.value);
+                                  field.onChange(Number(e.target.value));
                                 }}
                               />
                             </div>
@@ -557,9 +541,7 @@ export function LabelGeneratorForm() {
                     </CardHeader>
                     <CardContent>
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-sm text-muted-foreground">
-                          Brother HL-L2350DW:
-                        </span>
+                        <span className="text-sm text-muted-foreground">Brother HL-L2350DW:</span>
                         <Badge variant="secondary">Y Offset: -0.5</Badge>
                         <Badge variant="secondary">Y Scale: 99.4%</Badge>
                       </div>
@@ -582,21 +564,15 @@ export function LabelGeneratorForm() {
               {/* Generation Summary */}
               <Card>
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-base">
-                    Generation Summary
-                  </CardTitle>
+                  <CardTitle className="text-base">Generation Summary</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground">
-                        Total Labels:
-                      </span>
+                      <span className="text-sm text-muted-foreground">Total Labels:</span>
                       <span className="text-lg font-semibold">
                         {(() => {
-                          const numLabels = form.watch("numLabels") as
-                            | number
-                            | undefined;
+                          const numLabels = form.watch("numLabels") as number | undefined;
                           const pages = form.watch("pages");
                           return numLabels ?? pages * 189;
                         })()}
@@ -609,9 +585,7 @@ export function LabelGeneratorForm() {
                           const prefixQR = form.watch("prefixQR") || "ASN";
                           const startAsn = form.watch("startAsn") || 1;
                           const digits = form.watch("digits") || 6;
-                          const numLabels = form.watch("numLabels") as
-                            | number
-                            | undefined;
+                          const numLabels = form.watch("numLabels") as number | undefined;
                           const pages = form.watch("pages") || 1;
                           const totalLabels = numLabels ?? pages * 189;
                           const endAsn = startAsn + totalLabels - 1;
@@ -652,8 +626,8 @@ export function LabelGeneratorForm() {
       {/* Footer */}
       <div className="text-center text-xs text-muted-foreground">
         <p>
-          Compatible with <a href="https://amzn.to/46t3MdG">Avery L4731</a>{" "}
-          label sheets • Works with{" "}
+          Compatible with <a href="https://amzn.to/46t3MdG">Avery L4731</a> label sheets • Works
+          with{" "}
           <a
             href="https://docs.paperless-ngx.com/"
             target="_blank"

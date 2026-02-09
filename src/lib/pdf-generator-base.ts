@@ -1,5 +1,5 @@
 import { jsPDF } from "jspdf";
-import { labelInfo } from "../config/avery-labels";
+
 import type {
   LabelGeneratorOptions,
   LabelInfo,
@@ -8,6 +8,8 @@ import type {
   ScaleFactor,
   Spacing,
 } from "../types/label-info";
+
+import { labelInfo } from "../config/avery-labels";
 import { MM_TO_POINTS } from "../util/const";
 import { generateQRCodeDataURL } from "./qr-renderer";
 
@@ -74,14 +76,10 @@ export abstract class PDFGeneratorBase {
     return {
       x:
         this.labelInfo.marginInMm.left +
-        x *
-          (this.labelInfo.labelSizeInMm.width +
-            this.labelInfo.gutterSizeInMm.x),
+        x * (this.labelInfo.labelSizeInMm.width + this.labelInfo.gutterSizeInMm.x),
       y:
         this.labelInfo.marginInMm.top +
-        y *
-          (this.labelInfo.labelSizeInMm.height +
-            this.labelInfo.gutterSizeInMm.y),
+        y * (this.labelInfo.labelSizeInMm.height + this.labelInfo.gutterSizeInMm.y),
     };
   }
 
@@ -101,13 +99,9 @@ export abstract class PDFGeneratorBase {
     this.drawDebugBorder(pos);
 
     // Text to QR encode and render
-    const textQR = `${this.prefixQR}${this.currentAsn
-      .toString()
-      .padStart(this.digits, "0")}`;
+    const textQR = `${this.prefixQR}${this.currentAsn.toString().padStart(this.digits, "0")}`;
 
-    const textPrint = `${this.prefixPrint}${this.currentAsn
-      .toString()
-      .padStart(this.digits, "0")}`;
+    const textPrint = `${this.prefixPrint}${this.currentAsn.toString().padStart(this.digits, "0")}`;
 
     // Calculate scaled label basic positions
     const outerX = pos.x * this.scale.x + this.offset.x;
@@ -154,10 +148,7 @@ export abstract class PDFGeneratorBase {
     const testFontSize = 10;
     this.doc.setFontSize(testFontSize);
     const testWidth = this.doc.getTextWidth(textPrint);
-    const fontSize = Math.max(
-      6,
-      (maxTextWidth / testWidth) * testFontSize * 0.95,
-    );
+    const fontSize = Math.max(6, (maxTextWidth / testWidth) * testFontSize * 0.95);
 
     this.doc.setFontSize(fontSize);
 
@@ -174,12 +165,8 @@ export abstract class PDFGeneratorBase {
 
   public abstract save(outputPath: string): Promise<void>;
 
-  public async renderLabels(
-    count: number,
-    onProgress?: (progress: number) => void,
-  ): Promise<void> {
-    const labelsPerPage =
-      this.labelInfo.numLabels.x * this.labelInfo.numLabels.y;
+  public async renderLabels(count: number, onProgress?: (progress: number) => void): Promise<void> {
+    const labelsPerPage = this.labelInfo.numLabels.x * this.labelInfo.numLabels.y;
     const totalPages = Math.ceil(count / labelsPerPage);
 
     // We'll render labels from index 'skip' up to 'count'
@@ -187,8 +174,7 @@ export abstract class PDFGeneratorBase {
     for (let labelIndex = this.skip; labelIndex < count; labelIndex++) {
       // Report progress
       if (onProgress) {
-        const progress =
-          ((labelIndex - this.skip + 1) / (count - this.skip)) * 100;
+        const progress = ((labelIndex - this.skip + 1) / (count - this.skip)) * 100;
         onProgress(Math.min(progress, 100));
       }
 
@@ -215,8 +201,6 @@ export abstract class PDFGeneratorBase {
     }
 
     const renderedLabels = count - this.skip;
-    console.log(
-      `Rendered ${renderedLabels.toFixed()} labels on ${totalPages.toFixed()} pages.`,
-    );
+    console.log(`Rendered ${renderedLabels.toFixed(0)} labels on ${totalPages.toFixed(0)} pages.`);
   }
 }

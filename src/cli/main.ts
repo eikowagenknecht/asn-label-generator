@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 import { Command, InvalidArgumentError } from "commander";
+
+import type { LabelGeneratorOptions } from "../types/label-info";
+
 import { labelInfo } from "../config/avery-labels";
 import { PDFGenerator } from "../lib/pdf-generator";
 import { cliOptionsSchema } from "../lib/validation";
-import type { LabelGeneratorOptions } from "../types/label-info";
 
 const parsePositiveIntArg = (value: string): number => {
   const parsed = Number.parseInt(value, 10);
@@ -38,25 +40,12 @@ const program = new Command()
     parsePositiveIntArg,
   )
   .option("-o, --output-file <file>", "output file path", "labels.pdf")
-  .option(
-    "-s, --start-asn <number>",
-    "starting ASN number",
-    parsePositiveIntArg,
-    1,
-  )
+  .option("-s, --start-asn <number>", "starting ASN number", parsePositiveIntArg, 1)
   .option("-b, --border", "draw borders", false)
   .option("-t, --top-down", "order labels by col instead of by row", false)
   .option("-d, --digits <number>", "digits in number", parsePositiveIntArg, 6)
-  .option(
-    "--prefixQR <text>",
-    "prefix for labels embedded in the QR code",
-    "ASN",
-  )
-  .option(
-    "--prefixPrint <text>",
-    "prefix for labels printed on the label",
-    "ASN",
-  )
+  .option("--prefixQR <text>", "prefix for labels embedded in the QR code", "ASN")
+  .option("--prefixPrint <text>", "prefix for labels printed on the label", "ASN")
   .option("--skip <number>", "skip first N labels", parsePositiveIntArg, 0)
   .option(
     "--format <format>",
@@ -99,8 +88,7 @@ async function main(): Promise<void> {
     }
 
     const labelsPerPage = labelFormat.numLabels.x * labelFormat.numLabels.y;
-    const count =
-      validatedOptions.numLabels ?? validatedOptions.pages * labelsPerPage;
+    const count = validatedOptions.numLabels ?? validatedOptions.pages * labelsPerPage;
 
     await generator.renderLabels(count);
     await generator.save(validatedOptions.outputFile);

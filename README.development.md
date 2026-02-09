@@ -21,15 +21,17 @@ pnpm install
 ## Development Commands
 
 ### Web Application Development
+
 ```bash
 # Run web app in development mode with hot reload
 pnpm dev:web
 
-# Build web version for deployment  
+# Build web version for deployment
 pnpm build:web
 ```
 
 ### CLI Development
+
 ```bash
 # Run CLI in development mode
 pnpm dev -- [options]
@@ -39,6 +41,7 @@ pnpm build
 ```
 
 ### Code Quality
+
 ```bash
 # Run complete linting (TypeScript, ESLint, Prettier, Biome)
 pnpm lint
@@ -59,6 +62,7 @@ pnpm format
 ```
 
 ### Testing
+
 ```bash
 # Run tests
 pnpm test
@@ -74,6 +78,7 @@ vitest run specific-test-file.test.ts
 ```
 
 ### Package Management
+
 ```bash
 # Clean node_modules
 pnpm clean:npm
@@ -121,26 +126,30 @@ pnpm knip
 
 1. Options parsed and validated via Zod schema
 2. PDFGenerator instantiated with label format configuration
-3. Labels positioned using calculated grid system with offset/scale support  
+3. Labels positioned using calculated grid system with offset/scale support
 4. Each label renders QR code and text side-by-side
 5. PDF generated and saved/downloaded
 
 ## Technology Stack
 
 ### Core Dependencies
+
 - **jsPDF**: PDF generation in browser
 - **QRCode**: QR code generation
 - **Zod**: Runtime validation and type safety
 - **Vite**: Build tool and dev server
 
 #### Web only
+
 - **React 19**: Web interface framework
 - **Tailwind CSS**: Utility-first CSS framework
 
 #### CLI only
+
 - **Commander.js**: CLI argument parsing
 
 ### Development Tools
+
 - **TypeScript**: Static type checking
 - **ESLint**: Code linting
 - **Prettier**: Code formatting

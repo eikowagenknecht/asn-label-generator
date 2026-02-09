@@ -1,4 +1,5 @@
 import { z } from "zod";
+
 import { labelInfo } from "../config/avery-labels";
 
 export const webFormSchema = z.object({
@@ -10,10 +11,7 @@ export const webFormSchema = z.object({
   topDown: z.boolean(),
   numLabels: z
     .preprocess(
-      (val) =>
-        val === "" || val === null || val === undefined
-          ? undefined
-          : Number(val),
+      (val) => (val === "" || val === null || val === undefined ? undefined : Number(val)),
       z.number().int().positive(),
     )
     .optional(),

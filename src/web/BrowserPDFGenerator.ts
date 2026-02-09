@@ -1,4 +1,4 @@
-import { PDFGeneratorBase } from "../lib/pdf-generator-base";
+import { PDFGeneratorBase } from "@/lib/pdf-generator-base";
 
 export class BrowserPDFGenerator extends PDFGeneratorBase {
   public override save(filename: string): Promise<void> {
@@ -16,11 +16,11 @@ export class BrowserPDFGenerator extends PDFGeneratorBase {
       link.download = filename;
 
       // Trigger download
-      document.body.appendChild(link);
+      document.body.append(link);
       link.click();
 
       // Clean up
-      document.body.removeChild(link);
+      link.remove();
       URL.revokeObjectURL(url);
 
       resolve();

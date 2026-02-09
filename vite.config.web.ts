@@ -1,7 +1,7 @@
+import tailwindcss from "@tailwindcss/vite";
+import react from "@vitejs/plugin-react";
 import path from "node:path";
 import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-import tailwindcss from "@tailwindcss/vite";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -12,35 +12,32 @@ export default defineConfig({
     },
   },
 
-  plugins: [
-    react(),
-    tailwindcss(),
-  ],
+  plugins: [react(), tailwindcss()],
 
   build: {
     // Disable source maps for smaller output
     sourcemap: false,
-    
+
     // Output directory
     outDir: "dist-web",
-    
+
     // Optimize rollup options
     rollupOptions: {
       external: [
         // Don't bundle these - we don't use them
-        'html2canvas',
-        'canvg',
-        'dompurify',
+        "html2canvas",
+        "canvg",
+        "dompurify",
       ],
       output: {
         // Use consistent naming for assets
-        entryFileNames: 'asn-label-generator.js',
-        chunkFileNames: 'asn-label-generator-[name].js',
+        entryFileNames: "asn-label-generator.js",
+        chunkFileNames: "asn-label-generator-[name].js",
         assetFileNames: (assetInfo) => {
-          if (assetInfo.names?.[0]?.endsWith('.css')) {
-            return 'asn-label-generator.css';
+          if (assetInfo.names?.[0]?.endsWith(".css")) {
+            return "asn-label-generator.css";
           }
-          return 'assets/[name].[ext]';
+          return "assets/[name].[ext]";
         },
       },
     },

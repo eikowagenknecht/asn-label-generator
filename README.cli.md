@@ -51,7 +51,6 @@ asn-label-generator [options]
 
 > **Note:** Global installation allows you to use the `asn-label-generator` command from anywhere. If you prefer not to install globally, use the methods above with the appropriate command format.
 
-
 ## Usage
 
 ### Basic Usage
@@ -72,22 +71,26 @@ node dist/main.js
 ### Examples
 
 Generate 50 labels:
+
 ```bash
 asn-label-generator --num-labels 50
 ```
 
 Generate 3 pages starting from ASN 1000:
+
 ```bash
 asn-label-generator --pages 3 --start-asn 1000
 ```
 
 Use custom prefixes:
+
 ```bash
 asn-label-generator --prefixPrint "P" --digits 6  # Private documents
 asn-label-generator --prefixPrint "B" --digits 6  # Business documents
 ```
 
 Continue from partially used sheet:
+
 ```bash
 asn-label-generator --skip 10
 ```
@@ -95,16 +98,19 @@ asn-label-generator --skip 10
 ### Advanced Options
 
 Test label alignment:
+
 ```bash
 asn-label-generator --border
 ```
 
 Adjust positioning (values in millimeters):
+
 ```bash
 asn-label-generator --offset-x 0.5 --offset-y -0.2 --scale-x 0.98
 ```
 
 Brother HL-L2350DW printer settings:
+
 ```bash
 asn-label-generator --offset-x 0 --offset-y -0.5 --scale-x 1.0 --scale-y 0.994475
 ```
@@ -136,6 +142,7 @@ Options:
 ## Development
 
 ### CLI Development
+
 ```bash
 # Run CLI in development mode
 pnpm dev -- [options]
@@ -145,6 +152,7 @@ pnpm build
 ```
 
 ### Code Quality
+
 ```bash
 # Run linting and formatting
 pnpm lint

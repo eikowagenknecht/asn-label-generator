@@ -1,4 +1,5 @@
 import { z } from "zod";
+
 import { labelInfo } from "../config/avery-labels";
 
 export const cliOptionsSchema = z.object({

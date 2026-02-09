@@ -22,13 +22,14 @@ The generated labels include both human-readable ASN numbers and QR codes.
 ### Features
 
 - Generate exact number of labels or full pages (189 labels per A4 sheet)
-- Configure starting number, digit length, and prefixes  
+- Configure starting number, digit length, and prefixes
 - Resume printing on partially used sheets
 - X/Y offsets, scaling, and debug borders for printer alignment
 - Adjust margins between QR codes and text
 - Processing happens in your browser
 
 ### Usage
+
 1. Visit [eikowagenknecht.com/asn-label-generator/](https://eikowagenknecht.com/asn-label-generator/)
 2. Configure your labels
 3. Generate and download PDF
