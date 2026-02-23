@@ -85,8 +85,8 @@ export function LabelGeneratorForm() {
       const count = data.numLabels ?? data.pages * labelsPerPage;
 
       // Use the base class renderLabels method with progress callback
-      await generator.renderLabels(count, (progress: number) => {
-        setProgress(progress);
+      await generator.renderLabels(count, (value: number) => {
+        setProgress(value);
       });
 
       setProgress(100);
