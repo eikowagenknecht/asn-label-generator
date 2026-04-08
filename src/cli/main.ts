@@ -1,11 +1,10 @@
 #!/usr/bin/env node
 import { Command, InvalidArgumentError } from "commander";
 
-import type { LabelGeneratorOptions } from "../types/label-info";
-
 import { labelInfo } from "../config/avery-labels";
 import { PDFGenerator } from "../lib/pdf-generator";
 import { cliOptionsSchema } from "../lib/validation";
+import type { LabelGeneratorOptions } from "../types/label-info";
 
 const parsePositiveIntArg = (value: string): number => {
   const parsed = Number.parseInt(value, 10);

@@ -1,5 +1,6 @@
 import { jsPDF } from "jspdf";
 
+import { labelInfo } from "../config/avery-labels";
 import type {
   LabelGeneratorOptions,
   LabelInfo,
@@ -8,8 +9,6 @@ import type {
   ScaleFactor,
   Spacing,
 } from "../types/label-info";
-
-import { labelInfo } from "../config/avery-labels";
 import { MM_TO_POINTS } from "../util/const";
 import { generateQRCodeDataURL } from "./qr-renderer";
 

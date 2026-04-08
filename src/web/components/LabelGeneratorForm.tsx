@@ -3,11 +3,10 @@ import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
-import type { LabelGeneratorOptions } from "@/types/label-info";
-import type { WebFormData } from "@/web/validation";
-
 import { labelInfo } from "@/config/avery-labels";
+import type { LabelGeneratorOptions } from "@/types/label-info";
 import { BrowserPDFGenerator } from "@/web/BrowserPDFGenerator";
+import type { WebFormData } from "@/web/validation";
 import { webFormSchema } from "@/web/validation";
 
 import { Badge } from "./ui/badge";
