@@ -76,8 +76,8 @@ importers:
         specifier: 21.0.1
         version: 21.0.1
       '@commitlint/types':
-        specifier: 20.5.0
-        version: 20.5.0
+        specifier: 21.0.1
+        version: 21.0.1
       '@types/node':
         specifier: 25.5.2
         version: 25.5.2
@@ -221,14 +221,6 @@ packages:
 
   '@commitlint/top-level@21.0.0':
     resolution: {integrity: sha512-8jPqyWZueuN4hU6/ArKVsZ6i8xWtjIrbzHEOaLaTGUfjhhbZNBfXef/DGjzxy55hAv3yFNxHLINfI1bCJ0/MzA==}
-    engines: {node: '>=22.12.0'}
-
-  '@commitlint/types@20.5.0':
-    resolution: {integrity: sha512-ZJoS8oSq2CAZEpc/YI9SulLrdiIyXeHb/OGqGrkUP6Q7YV+0ouNAa7GjqRdXeQPncHQIDz/jbCTlHScvYvO/gA==}
-    engines: {node: '>=v18'}
-
-  '@commitlint/types@21.0.0':
-    resolution: {integrity: sha512-6nEz+M7I90iix4sviA8NLwskOuyt0M98KUU2aYgiKbn46jMSxUm1l2ACtzRd9ec+y38aKyJhW4Fp6NW0z35kJQ==}
     engines: {node: '>=22.12.0'}
 
   '@commitlint/types@21.0.1':
@@ -2390,7 +2382,7 @@ snapshots:
       '@commitlint/lint': 21.0.0
       '@commitlint/load': 21.0.0(@types/node@25.5.2)(typescript@6.0.3)
       '@commitlint/read': 21.0.0(conventional-commits-parser@6.4.0)
-      '@commitlint/types': 21.0.0
+      '@commitlint/types': 21.0.1
       tinyexec: 1.1.2
       yargs: 18.0.0
     transitivePeerDependencies:
@@ -2486,16 +2478,6 @@ snapshots:
   '@commitlint/top-level@21.0.0':
     dependencies:
       escalade: 3.2.0
-
-  '@commitlint/types@20.5.0':
-    dependencies:
-      conventional-commits-parser: 6.4.0
-      picocolors: 1.1.1
-
-  '@commitlint/types@21.0.0':
-    dependencies:
-      conventional-commits-parser: 6.4.0
-      picocolors: 1.1.1
 
   '@commitlint/types@21.0.1':
     dependencies:
