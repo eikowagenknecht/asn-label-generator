@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 
 import { labelInfo } from "@/config/avery-labels";
 import type { LabelGeneratorOptions } from "@/types/label-info";
@@ -51,6 +51,13 @@ export function LabelGeneratorForm() {
       marginY: 1,
     },
   });
+
+  const { control } = form;
+  const watchedPrefixQR = useWatch({ control, name: "prefixQR" });
+  const watchedStartAsn = useWatch({ control, name: "startAsn" });
+  const watchedDigits = useWatch({ control, name: "digits" });
+  const watchedNumLabels = useWatch({ control, name: "numLabels" }) as number | undefined;
+  const watchedPages = useWatch({ control, name: "pages" });
 
   const onSubmit = async (data: WebFormData) => {
     setIsGenerating(true);
@@ -186,12 +193,8 @@ export function LabelGeneratorForm() {
                       />
                     </FormControl>
                     <FormDescription>
-                      The first ASN number to generate (preview: {form.watch("prefixQR") || "ASN"}
-                      {form
-                        .watch("startAsn")
-                        .toString()
-                        .padStart(form.watch("digits") || 6, "0")}
-                      )
+                      The first ASN number to generate (preview: {watchedPrefixQR || "ASN"}
+                      {watchedStartAsn.toString().padStart(watchedDigits || 6, "0")})
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -334,7 +337,7 @@ export function LabelGeneratorForm() {
                             <Input
                               maxLength={10}
                               {...field}
-                              placeholder={form.watch("prefixQR") || "ASN"}
+                              placeholder={watchedPrefixQR || "ASN"}
                             />
                           </FormControl>
                           <FormDescription>Shown on label (blank = use QR prefix)</FormDescription>
@@ -570,23 +573,18 @@ export function LabelGeneratorForm() {
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-muted-foreground">Total Labels:</span>
                       <span className="text-lg font-semibold">
-                        {(() => {
-                          const numLabels = form.watch("numLabels") as number | undefined;
-                          const pages = form.watch("pages");
-                          return numLabels ?? pages * 189;
-                        })()}
+                        {watchedNumLabels ?? watchedPages * 189}
                       </span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-muted-foreground">Range:</span>
                       <span className="font-mono">
                         {(() => {
-                          const prefixQR = form.watch("prefixQR") || "ASN";
-                          const startAsn = form.watch("startAsn") || 1;
-                          const digits = form.watch("digits") || 6;
-                          const numLabels = form.watch("numLabels") as number | undefined;
-                          const pages = form.watch("pages") || 1;
-                          const totalLabels = numLabels ?? pages * 189;
+                          const prefixQR = watchedPrefixQR || "ASN";
+                          const startAsn = watchedStartAsn || 1;
+                          const digits = watchedDigits || 6;
+                          const pages = watchedPages || 1;
+                          const totalLabels = watchedNumLabels ?? pages * 189;
                           const endAsn = startAsn + totalLabels - 1;
 
                           return `${prefixQR}${startAsn.toString().padStart(digits, "0")} → ${prefixQR}${endAsn.toString().padStart(digits, "0")}`;

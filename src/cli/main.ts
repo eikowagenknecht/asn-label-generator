@@ -7,16 +7,16 @@ import { cliOptionsSchema } from "../lib/validation";
 import type { LabelGeneratorOptions } from "../types/label-info";
 
 const parsePositiveIntArg = (value: string): number => {
-  const parsed = Number.parseInt(value, 10);
-  if (Number.isNaN(parsed) || parsed <= 0) {
+  const parsed = Math.trunc(Number(value));
+  if (value.trim() === "" || Number.isNaN(parsed) || parsed <= 0) {
     throw new InvalidArgumentError("Value must be a positive number.");
   }
   return parsed;
 };
 
 const parseFloatArg = (value: string): number => {
-  const parsed = Number.parseFloat(value);
-  if (Number.isNaN(parsed)) {
+  const parsed = Number(value);
+  if (value.trim() === "" || Number.isNaN(parsed)) {
     throw new InvalidArgumentError("Value must be a number.");
   }
   return parsed;
